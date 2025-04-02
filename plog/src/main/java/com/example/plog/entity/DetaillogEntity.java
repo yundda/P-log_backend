@@ -2,6 +2,8 @@ package com.example.plog.entity;
 
 import java.time.LocalTime;
 
+import com.example.plog.entity.Enum.Mealtype;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

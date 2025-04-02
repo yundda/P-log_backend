@@ -1,4 +1,4 @@
-package com.example.plog.entity;
+package com.example.plog.entity.Enum;
 
 public enum Role {
     OWNER,

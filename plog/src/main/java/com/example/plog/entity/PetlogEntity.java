@@ -1,5 +1,7 @@
 package com.example.plog.entity;
 
+import com.example.plog.entity.Enum.Tpye;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
