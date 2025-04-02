@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
-import com.example.plog.repository.entity.InvateEntity;
+import com.example.plog.repository.entity.RequestEntity;
 
 @Repository
-public interface InvateRepository extends JpaRepository<InvateEntity,Long>, QuerydslPredicateExecutor<InvateEntity> {
+public interface RequestRepository extends JpaRepository<RequestEntity,Long>, QuerydslPredicateExecutor<RequestEntity> {
 
 }
