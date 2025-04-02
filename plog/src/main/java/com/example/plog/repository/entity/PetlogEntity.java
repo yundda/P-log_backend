@@ -24,7 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "PetLog")
+@Table(name = "pet_log")
 public class PetlogEntity extends BaseEntity {
 
     @Id

@@ -24,8 +24,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "Invate")
-public class InvateEntity extends BaseEntity {
+@Table(name = "request")
+public class RequestEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
