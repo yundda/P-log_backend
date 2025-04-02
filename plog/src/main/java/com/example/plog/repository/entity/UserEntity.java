@@ -19,7 +19,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Table(name = "User")
-public class PlogEntity extends BaseEntity {
+
+public class UserEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

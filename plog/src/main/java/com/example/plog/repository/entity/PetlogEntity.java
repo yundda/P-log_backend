@@ -1,8 +1,6 @@
 package com.example.plog.repository.entity;
 
-import java.time.LocalDate;
-
-import com.example.plog.repository.entity.Enum.Gender;
+import com.example.plog.repository.entity.Enum.Tpye;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +9,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,33 +24,23 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "PetProfile")
-public class PetEntity extends BaseEntity {
+@Table(name = "PetLog")
+public class PetlogEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gno;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "pet_id", nullable = false)
+    private PetEntity pet_id;
 
-    @Column(name = "species", nullable = false)
-    private String species;
-
-    @Column(name = "breed", nullable = false)
-    private String breed;
-
-    @Column(name = "birthday", nullable = false)
-    private LocalDate birthday;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user_id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
-    private Gender gender;
-
-    @Column(name = "weight", nullable = false)
-    private double weight;
-
-    @Column(name = "photo")
-    private String photo;
+    @Column(name = "type", nullable = false)
+    private Tpye tpye;
 
 }
