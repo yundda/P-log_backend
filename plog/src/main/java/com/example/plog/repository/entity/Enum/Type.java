@@ -1,6 +1,6 @@
 package com.example.plog.repository.entity.Enum;
 
-public enum Tpye {
+public enum Type {
     MEAL,
     WALK,
     HOSPITAL,

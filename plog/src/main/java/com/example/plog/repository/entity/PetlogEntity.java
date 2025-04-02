@@ -1,6 +1,6 @@
 package com.example.plog.repository.entity;
 
-import com.example.plog.repository.entity.Enum.Tpye;
+import com.example.plog.repository.entity.Enum.Type;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,6 +41,6 @@ public class PetlogEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private Tpye tpye;
+    private Type tpye;
 
 }
