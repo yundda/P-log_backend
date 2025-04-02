@@ -1,6 +1,6 @@
-package com.example.plog.entity;
+package com.example.plog.repository.entity;
 
-import com.example.plog.entity.Enum.Status;
+import com.example.plog.repository.entity.Enum.Status;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

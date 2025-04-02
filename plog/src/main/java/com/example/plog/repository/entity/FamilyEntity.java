@@ -1,6 +1,6 @@
-package com.example.plog.entity;
+package com.example.plog.repository.entity;
 
-import com.example.plog.entity.Enum.Tpye;
+import com.example.plog.repository.entity.Enum.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,23 +24,23 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "PetLog")
-public class PetlogEntity extends BaseEntity {
+@Table(name = "Family")
+public class FamilyEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gno;
 
     @ManyToOne
-    @JoinColumn(name = "pet_id", nullable = false)
-    private PetEntity pet_id;
-
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user_id;
 
+    @ManyToOne
+    @JoinColumn(name = "pet_id", nullable = false)
+    private PetEntity pet_id;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private Tpye tpye;
+    @Column(name = "role", nullable = false)
+    private Role role;
 
 }

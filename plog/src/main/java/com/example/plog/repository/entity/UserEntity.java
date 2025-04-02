@@ -1,4 +1,4 @@
-package com.example.plog.entity;
+package com.example.plog.repository.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Table(name = "User")
+
 public class UserEntity extends BaseEntity {
 
     @Id

@@ -1,4 +1,4 @@
-package com.example.plog.entity.Enum;
+package com.example.plog.repository.entity.Enum;
 
 public enum Gender {
     MALE,

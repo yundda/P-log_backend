@@ -1,16 +1,14 @@
-package com.example.plog.entity;
+package com.example.plog.repository.entity;
 
-import com.example.plog.entity.Enum.Role;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,23 +22,27 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "Family")
-public class FamilyEntity extends BaseEntity {
+@Table(name = "HealthLog")
+public class HealthlogEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gno;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user_id;
+    @OneToOne
+    @JoinColumn(name = "log_id", nullable = false)
+    private PetlogEntity log_id;
 
-    @ManyToOne
-    @JoinColumn(name = "pet_id", nullable = false)
-    private PetEntity pet_id;
+    @Column(name = "vaccination")
+    private String vaccination;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private Role role;
+    @Column(name = "vaccination_log")
+    private Boolean vaccination_log;
+
+    @Column(name = "hospital")
+    private String hospital;
+
+    @Column(name = "hospital_log")
+    private LocalTime hospital_log;
 
 }

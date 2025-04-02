@@ -1,8 +1,8 @@
-package com.example.plog.entity;
+package com.example.plog.repository.entity;
 
 import java.time.LocalTime;
 
-import com.example.plog.entity.Enum.Mealtype;
+import com.example.plog.repository.entity.Enum.Mealtype;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
 
 @Entity
 @Getter
