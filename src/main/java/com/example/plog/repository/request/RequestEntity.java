@@ -1,6 +1,9 @@
-package com.example.plog.repository.entity;
+package com.example.plog.repository.request;
 
-import com.example.plog.repository.entity.Enum.Status;
+import com.example.plog.repository.BaseEntity;
+import com.example.plog.repository.Enum.Status;
+import com.example.plog.repository.pet.PetEntity;
+import com.example.plog.repository.user.UserEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,15 +17,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
 @Table(name = "request")
 public class RequestEntity extends BaseEntity {

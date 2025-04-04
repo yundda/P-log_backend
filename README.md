@@ -15,3 +15,91 @@
 | **Chore**            | 빌드 태스크 업데이트, 패키지 매니저 설정 (프로덕션 코드 변경 없음) |
 | **Rename**           | 파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우                 |
 | **Remove**           | 파일을 삭제하는 작업만 수행한 경우                                 |
+
+```
+P-log_backend
+├─ .DS_Store
+├─ .env
+├─ .mvn
+│  └─ wrapper
+│     └─ maven-wrapper.properties
+├─ README.md
+├─ mvnw
+├─ mvnw.cmd
+├─ plog
+├─ pom.xml
+└─ src
+   ├─ main
+   │  ├─ java
+   │  │  └─ com
+   │  │     └─ example
+   │  │        └─ plog
+   │  │           ├─ PlogApplication.java
+   │  │           ├─ config
+   │  │           │  ├─ JdbcConfig.java
+   │  │           │  ├─ JpaConfig1.java
+   │  │           │  ├─ WebSecurityConfig.java
+   │  │           │  ├─ jwt
+   │  │           │  │  └─ JwtProperties.java
+   │  │           │  └─ security
+   │  │           │     └─ SecurityConfig.java
+   │  │           ├─ repository
+   │  │           │  ├─ Interface
+   │  │           │  │  ├─ DetaillogRepository.java
+   │  │           │  │  ├─ FamilyRepository.java
+   │  │           │  │  ├─ HealthlogRepository.java
+   │  │           │  │  ├─ PetRepository.java
+   │  │           │  │  ├─ PetlogRepository.java
+   │  │           │  │  ├─ RequestRepository.java
+   │  │           │  │  └─ UserRepository.java
+   │  │           │  └─ entity
+   │  │           │     ├─ BaseEntity.java
+   │  │           │     ├─ DetaillogEntity.java
+   │  │           │     ├─ Enum
+   │  │           │     │  ├─ Gender.java
+   │  │           │     │  ├─ Mealtype.java
+   │  │           │     │  ├─ Role.java
+   │  │           │     │  ├─ Status.java
+   │  │           │     │  └─ Type.java
+   │  │           │     ├─ FamilyEntity.java
+   │  │           │     ├─ HealthlogEntity.java
+   │  │           │     ├─ PetEntity.java
+   │  │           │     ├─ PetlogEntity.java
+   │  │           │     ├─ RequestEntity.java
+   │  │           │     └─ UserEntity.java
+   │  │           ├─ security
+   │  │           │  ├─ JwtAuthenticationFilter.java
+   │  │           │  └─ TokenProvider.java
+   │  │           ├─ service
+   │  │           │  ├─ AuthService.java
+   │  │           │  ├─ UserService.java
+   │  │           │  ├─ exceptions
+   │  │           │  │  ├─ AuthorizationException.java
+   │  │           │  │  ├─ DatabaseException.java
+   │  │           │  │  ├─ InvalidValueException.java
+   │  │           │  │  └─ NotFoundException.java
+   │  │           │  └─ mapper
+   │  │           │     └─ UserMapper.java
+   │  │           └─ web
+   │  │              ├─ advice
+   │  │              │  └─ ExceptionalControllerAdvice.java
+   │  │              ├─ controller
+   │  │              │  ├─ AuthController.java
+   │  │              │  ├─ TestController.java
+   │  │              │  └─ UserController.java
+   │  │              └─ dto
+   │  │                 ├─ ApiResponse.java
+   │  │                 ├─ UserDto.java
+   │  │                 ├─ UserInfoDto.java
+   │  │                 ├─ UserLoginDto.java
+   │  │                 └─ UserRegistrationDto.java
+   │  └─ resources
+   │     └─ application.properties
+   └─ test
+      └─ java
+         └─ com
+            └─ example
+               └─ plog
+                  └─ PlogApplicationTests.java
+
+```

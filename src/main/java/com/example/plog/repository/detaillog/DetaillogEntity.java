@@ -1,11 +1,14 @@
-package com.example.plog.repository.entity;
+package com.example.plog.repository.detaillog;
 
 import java.time.LocalTime;
 
-import com.example.plog.repository.entity.Enum.Mealtype;
+import com.example.plog.repository.BaseEntity;
+import com.example.plog.repository.Enum.Mealtype;
+import com.example.plog.repository.petlog.PetlogEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +32,7 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
 @Table(name = "DetailLog")
 public class DetaillogEntity extends BaseEntity {
