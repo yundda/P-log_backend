@@ -3,7 +3,7 @@ package com.example.plog.service;
 import org.springframework.stereotype.Component;
 
 import com.example.plog.repository.pet.PetEntity;
-import com.example.plog.repository.pet.PetRepository;
+import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.web.dto.PetProfileDto;
 
@@ -13,26 +13,26 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PetProfileService implements PetProfileMapper {
 
-    private final PetRepository PetRepository;
+    private final PetJpaRepository petJpaRepository;
 
     
     public Long register(PetProfileDto dto){
         PetEntity entity = dtoToEntity(dto);
         System.out.println(entity.getGender());
-        PetEntity saved = PetRepository.save(entity);
+        PetEntity saved = petJpaRepository.save(entity);
         return saved.getId();
     }
 
     
     public PetProfileDto read(Long id) {
-        PetEntity entity = PetRepository.findById(id)
+        PetEntity entity = petJpaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Pet not found with id: " + id));
     return entityToDto(entity);
     }
 
     
     public void modify(PetProfileDto dto){
-        PetEntity entity = PetRepository.findById(dto.getId())
+        PetEntity entity = petJpaRepository.findById(dto.getId())
         .orElseThrow(() -> new RuntimeException("Pet not found with id: " + dto.getId()));
 
         entity.setName(dto.getName());
@@ -43,10 +43,10 @@ public class PetProfileService implements PetProfileMapper {
         entity.setWeight(dto.getWeight());
         entity.setPhoto(dto.getPhoto());
 
-        PetRepository.save(entity);
+        petJpaRepository.save(entity);
     }
 
     public void remove(Long id){
-        PetRepository.deleteById(id);
+        petJpaRepository.deleteById(id);
     }
 }

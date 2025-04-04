@@ -6,7 +6,6 @@ import com.example.plog.web.dto.PetProfileDto;
 public interface PetProfileMapper {
 
     default PetEntity dtoToEntity(PetProfileDto dto){
-        System.out.println("sdfghjk");
         if(dto == null){
             return null;
         }
