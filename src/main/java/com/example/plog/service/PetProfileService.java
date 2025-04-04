@@ -35,14 +35,27 @@ public class PetProfileService implements PetProfileMapper {
         PetEntity entity = petJpaRepository.findById(dto.getId())
         .orElseThrow(() -> new RuntimeException("Pet not found with id: " + dto.getId()));
 
-        entity.setName(dto.getName());
-        entity.setSpecies(dto.getSpecies());
-        entity.setBreed(dto.getBreed());
-        entity.setBirthday(dto.getBirthday());
-        entity.setGender(dto.getGender());
-        entity.setWeight(dto.getWeight());
-        entity.setPhoto(dto.getPhoto());
-
+        if(dto.getName()!=null){
+            entity.setName(dto.getName());
+        }
+        if(dto.getSpecies()!=null){
+            entity.setSpecies(dto.getSpecies());
+        }
+        if(dto.getBreed()!=null){
+            entity.setBreed(dto.getBreed());
+        }
+        if(dto.getBirthday()!=null){
+            entity.setBirthday(dto.getBirthday());
+        }
+        if(dto.getGender()!=null){
+            entity.setGender(dto.getGender());
+        }
+        if(dto.getWeight()!=null){
+            entity.setWeight(dto.getWeight());
+        }
+        if(dto.getPhoto()!=null){
+            entity.setPhoto(dto.getPhoto());
+        }
         petJpaRepository.save(entity);
     }
 
