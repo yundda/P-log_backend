@@ -9,6 +9,16 @@
       "projectName": "plog",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-PlogApplication<plog>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.example.plog.PlogApplication",
+      "projectName": "plog",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

@@ -53,7 +53,7 @@ public class PetEntity extends BaseEntity {
     private Gender gender;
 
     @Column(name = "weight", nullable = false)
-    private double weight;
+    private Double weight;
 
     @Column(name = "photo")
     private String photo;
