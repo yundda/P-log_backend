@@ -2,10 +2,24 @@
   "configurations": [
     {
       "type": "java",
+      "name": "PlogApplication",
+      "request": "launch",
+      "mainClass": "com.example.plog.PlogApplication",
+      "projectName": ""
+    },
+    {
+      "type": "java",
+      "name": "PlogApplication",
+      "request": "launch",
+      "mainClass": "com.example.PlogApplication",
+      "projectName": ""
+    },
+    {
+      "type": "java",
       "name": "Spring Boot-PlogApplication<plog>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "mainClass": "com.example.plog.PlogApplication",
+      "mainClass": "com.example.PlogApplication",
       "projectName": "plog",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
