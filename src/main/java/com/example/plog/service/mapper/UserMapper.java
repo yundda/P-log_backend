@@ -1,31 +1,32 @@
 package com.example.plog.service.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
+import com.example.plog.repository.user.UserEntity;
 import com.example.plog.web.dto.UserDto;
-import com.example.plog.repository.entity.UserEntity;
-
+@Mapper
 public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    Long register(UserDto dto);
-    UserDto read(Long gno);
-    void modify(UserDto dto);
-    void remove(UserDto dto);
-
-    default UserEntity dtoToEntity(UserDto dto) {
-        return UserEntity.builder()
-                .id(dto.getId())
-                .email(dto.getEmail())
-                .nickname(dto.getNickname())
-                .password(dto.getPassword())
-                .build();
-    }
-    
-    default UserDto entityToDto(UserEntity entity) {
-        return UserDto.builder()
-                .id(entity.getId())
-                .email(entity.getEmail())
-                .nickname(entity.getNickname())
-                .password(entity.getPassword())
-                .build();
-    }
+    UserDto userDtoToUserDto(UserEntity userEntity);
 
 }
+
+// EX)
+// @Mapper
+// public interface ItemMapper {
+//     싱글톤 패턴으로 생성
+//     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
+
+//     메소드
+//     필요할 경우만 @Mapping 사용 같은 변수명 사용하고 특별한 요구사항 없을 경우, 굳이 필요 x
+//     @Mapping(target = "spec.cpu", source = "cpu")
+//     @Mapping(target = "spec.capacity", source = "capacity")
+//     Item itemEntityToItem(ItemEntity itemEntity);
+
+//     @Mapping(target = "storeSales" , ignore = true)
+//     @Mapping(target = "stock" , expression = "java(0)")
+//     ItemEntity itemBodytoItemEntity(Integer id, ItemBody itemBody);
+
+// }
