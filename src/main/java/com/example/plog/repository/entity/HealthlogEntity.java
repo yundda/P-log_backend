@@ -2,6 +2,8 @@ package com.example.plog.repository.entity;
 
 import java.time.LocalTime;
 
+import com.example.plog.repository.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -2,7 +2,8 @@ package com.example.plog.repository.entity;
 
 import java.time.LocalTime;
 
-import com.example.plog.repository.entity.Enum.Mealtype;
+import com.example.plog.repository.BaseEntity;
+import com.example.plog.repository.Enum.Mealtype;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +17,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.example.plog.repository.entity;
+package com.example.plog.repository;
 
 import java.time.LocalDateTime;
 
@@ -15,13 +15,13 @@ import lombok.Getter;
 @EntityListeners(value={AuditingEntityListener.class})
 @Getter
 
-abstract class BaseEntity {
+public abstract class BaseEntity {
 
     @CreatedDate
     @Column(name="create_at", updatable = false)
-    private LocalDateTime regDate;
+    private LocalDateTime createAt;
 
     @LastModifiedDate
     @Column(name="update_at")
-    private LocalDateTime modDate;
+    private LocalDateTime updateAt;
 }

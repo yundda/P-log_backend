@@ -6,7 +6,7 @@ import com.example.plog.repository.entity.UserEntity;
 public interface UserMapper {
 
     Long register(UserDto dto);
-    UserDto read(Long gno);
+    UserDto read(Long id);
     void modify(UserDto dto);
     void remove(UserDto dto);
 

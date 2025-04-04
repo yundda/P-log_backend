@@ -1,6 +1,8 @@
 package com.example.plog.repository.entity;
 
-import com.example.plog.repository.entity.Enum.Role;
+import com.example.plog.repository.BaseEntity;
+import com.example.plog.repository.Enum.Role;
+import com.example.plog.repository.pet.PetEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
