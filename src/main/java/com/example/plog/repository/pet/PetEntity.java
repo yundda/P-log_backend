@@ -15,13 +15,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
+@Setter
 @Builder
+@EqualsAndHashCode(of = "id", callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -53,40 +57,5 @@ public class PetEntity extends BaseEntity {
 
     @Column(name = "photo")
     private String photo;
-
-	public void setName(String name2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setName'");
-	}
-
-	public void setSpecies(String species2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setSpecies'");
-	}
-
-	public void setBreed(String breed2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setBreed'");
-	}
-
-	public void setBirthday(LocalDate birthday2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setBirthday'");
-	}
-
-	public void setGender(Gender gender2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setGender'");
-	}
-
-	public void setWeight(Double weight2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setWeight'");
-	}
-
-	public void setPhoto(String photo2) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setPhoto'");
-	}
 
 }

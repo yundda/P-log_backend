@@ -73,11 +73,11 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <!-- 자바 JWT 라이브러리 -->
-        <!-- <dependency>
+        <dependency>
              <groupId>io.jsonwebtoken</groupId>
              <artifactId>jjwt</artifactId>
              <version>0.9.1</version>
-        </dependency> -->
+        </dependency>
         <!-- JAXB for Java 17 -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>

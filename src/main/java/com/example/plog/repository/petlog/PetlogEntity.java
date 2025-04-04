@@ -1,8 +1,9 @@
-package com.example.plog.repository.entity;
+package com.example.plog.repository.petlog;
 
 import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.Enum.Type;
 import com.example.plog.repository.pet.PetEntity;
+import com.example.plog.repository.user.UserEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,13 +17,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Getter
+@Setter
 @Builder
+@EqualsAndHashCode(of = "id", callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

@@ -9,7 +9,7 @@ import com.example.plog.web.dto.ApiResponse;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class TestController {
     @GetMapping("/test")
         public ResponseEntity<ApiResponse<String>> test(){

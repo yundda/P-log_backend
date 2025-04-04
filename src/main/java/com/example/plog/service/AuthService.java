@@ -1,21 +1,27 @@
 package com.example.plog.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.plog.repository.Interface.UserRepository;
+import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.TokenProvider;
 import com.example.plog.web.dto.UserInfoDto;
 import com.example.plog.web.dto.UserLoginDto;
 import com.example.plog.web.dto.UserRegistrationDto;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
+
 @Service
+@Slf4j
 public class AuthService {
-    // private final UserRepository userRepository;
-    // private final TokenProvider tokenProvider;
-    // private PasswordEncoder passwordEncoder;
+    @Autowired
+    UserJpaRepository userJpaRepository;
+    @Autowired
+    TokenProvider tokenProvider;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public UserInfoDto registerUser(UserRegistrationDto userRegistrationDto) {
         throw new UnsupportedOperationException("Unimplemented method 'registerUser'");
