@@ -38,6 +38,7 @@ public class TokenProvider {
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
+                .claim("nickname", userEntity.getNickname())   // 추가된 claim
                 .compact();
     }
     
