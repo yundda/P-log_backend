@@ -1,4 +1,4 @@
-package com.example.plog.config.dotenv;
+package com.example.plog.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;

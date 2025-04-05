@@ -22,7 +22,8 @@
 //         entityManagerFactoryRef = "entityManagerFactoryBean",
 //         transactionManagerRef = "tmJpa"
 // )
-// @EntityScan(basePackages = {"com.github.supercoding.repository.items", "com.github.supercoding.repository.storeSales",}) // 추가
+// @EntityScan(basePackages = {"com.example.plog.repository.detaillog","com.example.plog.repository.family","com.example.plog.repository.healthlog",
+//                 "com.example.plog.repository.pet","com.example.plog.repository.petlog","com.example.plog.repository.request","com.example.plog.repository.user"})
 
 // public class JpaConfig {
 
