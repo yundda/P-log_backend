@@ -8,7 +8,8 @@
       "mainClass": "com.example.plog.PlogApplication",
       "projectName": "plog",
       "args": "",
-      "envFile": "${workspaceFolder}/.env"
+      "envFile": "${workspaceFolder}/.env",
+      "vmArgs": "-Djavax.xml.bind.JAXBContext=jakarta.xml.bind.JAXBContext"
     }
   ]
 }

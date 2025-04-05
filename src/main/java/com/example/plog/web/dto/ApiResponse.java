@@ -1,5 +1,6 @@
 package com.example.plog.web.dto;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
