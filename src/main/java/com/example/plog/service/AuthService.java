@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.TokenProvider;
-import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.mapper.UserMapper;
 import com.example.plog.web.dto.UserLoginDto;
