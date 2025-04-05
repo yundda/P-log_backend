@@ -1,4 +1,4 @@
-package com.example.plog.web.dto;
+package com.example.plog.web.dto.user;
 
 import org.springframework.stereotype.Component;
 
@@ -21,6 +21,7 @@ public class UserResponseDto {
     private String email;
     private Long requesterId;
     private String requesterNick;
+    
     private Long petId; 
     private String token;
 }

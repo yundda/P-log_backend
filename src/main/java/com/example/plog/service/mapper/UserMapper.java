@@ -5,8 +5,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.example.plog.repository.user.UserEntity;
-import com.example.plog.web.dto.UserRegistrationDto;
-import com.example.plog.web.dto.UserResponseDto;
+import com.example.plog.web.dto.user.UserRegistrationDto;
+import com.example.plog.web.dto.user.UserResponseDto;
 @Mapper
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
