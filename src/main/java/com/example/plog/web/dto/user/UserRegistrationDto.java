@@ -1,4 +1,4 @@
-package com.example.plog.web.dto;
+package com.example.plog.web.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +8,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDto {
+@Builder
+public class UserRegistrationDto {
     private String email;
     private String password;
+    private String nickname;
 }

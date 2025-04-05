@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.plog.service.AuthService;
 import com.example.plog.web.dto.ApiResponse;
-import com.example.plog.web.dto.UserLoginDto;
-import com.example.plog.web.dto.UserRegistrationDto;
-import com.example.plog.web.dto.UserResponseDto;
+import com.example.plog.web.dto.user.UserLoginDto;
+import com.example.plog.web.dto.user.UserRegistrationDto;
+import com.example.plog.web.dto.user.UserResponseDto;
 
 
 @RestController

@@ -22,7 +22,7 @@ public class ExceptionalControllerAdvice {
 
     }
 
-    // 유효성 검사 실패(400) - 중복 이메일, 중복 닉네임, 비밀번호 검증 실패 등
+    // 유효성 검사 실패(400) - 유효성 검증 실패 등
     @ExceptionHandler(InvalidValueException.class)
     public ResponseEntity<ApiResponse<Void>> handleInvalidValueException(InvalidValueException ive) {
         return handleException(ive,HttpStatus.BAD_REQUEST,"VF");
@@ -33,7 +33,7 @@ public class ExceptionalControllerAdvice {
     public ResponseEntity<ApiResponse<Void>> handleAuthorizationException(AuthorizationException ae) {
         return handleException(ae, HttpStatus.UNAUTHORIZED,"AF");
     }
-    // NotFound(404)
+    // NotFound(404) - 중복 이메일, 중복 닉네임, 비밀번호 검증 실패 등
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(NotFoundException nfe) {
         return handleException(nfe, HttpStatus.NOT_FOUND,"NF");

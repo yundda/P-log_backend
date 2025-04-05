@@ -19,14 +19,12 @@
 ```
 P-log_backend
 ├─ .DS_Store
-├─ .env
 ├─ .mvn
 │  └─ wrapper
 │     └─ maven-wrapper.properties
 ├─ README.md
 ├─ mvnw
 ├─ mvnw.cmd
-├─ plog
 ├─ pom.xml
 └─ src
    ├─ main
@@ -36,42 +34,49 @@ P-log_backend
    │  │        └─ plog
    │  │           ├─ PlogApplication.java
    │  │           ├─ config
+   │  │           │  ├─ DotenvConfig.java
    │  │           │  ├─ JdbcConfig.java
-   │  │           │  ├─ JpaConfig1.java
+   │  │           │  ├─ JpaConfig.java
    │  │           │  ├─ WebSecurityConfig.java
    │  │           │  ├─ jwt
    │  │           │  │  └─ JwtProperties.java
    │  │           │  └─ security
    │  │           │     └─ SecurityConfig.java
    │  │           ├─ repository
-   │  │           │  ├─ Interface
-   │  │           │  │  ├─ DetaillogRepository.java
-   │  │           │  │  ├─ FamilyRepository.java
-   │  │           │  │  ├─ HealthlogRepository.java
-   │  │           │  │  ├─ PetRepository.java
-   │  │           │  │  ├─ PetlogRepository.java
-   │  │           │  │  ├─ RequestRepository.java
-   │  │           │  │  └─ UserRepository.java
-   │  │           │  └─ entity
-   │  │           │     ├─ BaseEntity.java
-   │  │           │     ├─ DetaillogEntity.java
-   │  │           │     ├─ Enum
-   │  │           │     │  ├─ Gender.java
-   │  │           │     │  ├─ Mealtype.java
-   │  │           │     │  ├─ Role.java
-   │  │           │     │  ├─ Status.java
-   │  │           │     │  └─ Type.java
-   │  │           │     ├─ FamilyEntity.java
-   │  │           │     ├─ HealthlogEntity.java
-   │  │           │     ├─ PetEntity.java
-   │  │           │     ├─ PetlogEntity.java
-   │  │           │     ├─ RequestEntity.java
-   │  │           │     └─ UserEntity.java
+   │  │           │  ├─ BaseEntity.java
+   │  │           │  ├─ Enum
+   │  │           │  │  ├─ Gender.java
+   │  │           │  │  ├─ Mealtype.java
+   │  │           │  │  ├─ Role.java
+   │  │           │  │  ├─ Status.java
+   │  │           │  │  └─ Type.java
+   │  │           │  ├─ detaillog
+   │  │           │  │  ├─ DetaillogEntity.java
+   │  │           │  │  └─ DetaillogJpaRepository.java
+   │  │           │  ├─ family
+   │  │           │  │  ├─ FamilyEntity.java
+   │  │           │  │  └─ FamilyJpaRepository.java
+   │  │           │  ├─ healthlog
+   │  │           │  │  ├─ HealthlogEntity.java
+   │  │           │  │  └─ HealthlogJpaRepository.java
+   │  │           │  ├─ pet
+   │  │           │  │  ├─ PetEntity.java
+   │  │           │  │  └─ PetJpaRepository.java
+   │  │           │  ├─ petlog
+   │  │           │  │  ├─ PetlogEntity.java
+   │  │           │  │  └─ PetlogJpaRepository.java
+   │  │           │  ├─ request
+   │  │           │  │  ├─ RequestEntity.java
+   │  │           │  │  └─ RequestJpaRepository.java
+   │  │           │  └─ user
+   │  │           │     ├─ UserEntity.java
+   │  │           │     └─ UserJpaRepository.java
    │  │           ├─ security
    │  │           │  ├─ JwtAuthenticationFilter.java
    │  │           │  └─ TokenProvider.java
    │  │           ├─ service
    │  │           │  ├─ AuthService.java
+   │  │           │  ├─ PetProfileService.java
    │  │           │  ├─ UserService.java
    │  │           │  ├─ exceptions
    │  │           │  │  ├─ AuthorizationException.java
@@ -79,20 +84,24 @@ P-log_backend
    │  │           │  │  ├─ InvalidValueException.java
    │  │           │  │  └─ NotFoundException.java
    │  │           │  └─ mapper
+   │  │           │     ├─ PetProfileMapper.java
    │  │           │     └─ UserMapper.java
    │  │           └─ web
    │  │              ├─ advice
    │  │              │  └─ ExceptionalControllerAdvice.java
    │  │              ├─ controller
    │  │              │  ├─ AuthController.java
+   │  │              │  ├─ PetProfileController.java
    │  │              │  ├─ TestController.java
    │  │              │  └─ UserController.java
    │  │              └─ dto
    │  │                 ├─ ApiResponse.java
-   │  │                 ├─ UserDto.java
-   │  │                 ├─ UserInfoDto.java
-   │  │                 ├─ UserLoginDto.java
-   │  │                 └─ UserRegistrationDto.java
+   │  │                 ├─ PetProfileDto.java
+   │  │                 └─ user
+   │  │                    ├─ UserDto.java
+   │  │                    ├─ UserLoginDto.java
+   │  │                    ├─ UserRegistrationDto.java
+   │  │                    └─ UserResponseDto.java
    │  └─ resources
    │     └─ application.properties
    └─ test
