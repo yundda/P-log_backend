@@ -40,11 +40,11 @@ public class FamilyEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user_id;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private PetEntity pet_id;
+    private PetEntity pet;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)

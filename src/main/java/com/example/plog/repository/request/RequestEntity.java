@@ -40,20 +40,35 @@ public class RequestEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "inviter_id", nullable = false)
-    private UserEntity inviter_id;
+    private UserEntity inviter;
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private PetEntity pet_id;
+    private PetEntity pet;
 
-    @Column(name = "token", nullable = false)
-    private String token;
+    @ManyToOne
+    @Column(name = "receiver_id", nullable = true)
+    private UserEntity receiver;
 
-    @Column(name = "reciver_email", nullable = false)
-    private String reciver_email;
+    @Column(name = "receiver_email", nullable = true)
+    private String receiverEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
+
+    public RequestEntity(UserEntity inviter, PetEntity pet, UserEntity receiver, Status status) {
+        this.inviter = inviter;
+        this.pet = pet;
+        this.receiver = receiver;
+        this.status = status;
+    }
+
+    public RequestEntity(UserEntity inviter, PetEntity pet, String receiverEmail, Status status) {
+        this.inviter = inviter;
+        this.pet = pet;
+        this.receiverEmail = receiverEmail;
+        this.status = status;
+    }
     
 }

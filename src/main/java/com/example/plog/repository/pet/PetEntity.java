@@ -1,10 +1,14 @@
 package com.example.plog.repository.pet;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.Enum.Gender;
+import com.example.plog.repository.family.FamilyEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,5 +62,11 @@ public class PetEntity extends BaseEntity {
 
     @Column(name = "photo")
     private String photo;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    private List<FamilyEntity> familyList = new ArrayList<>();
+
+
+
 
 }

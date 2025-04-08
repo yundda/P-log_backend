@@ -58,15 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
                 log.info("➡️ [JwtFilter] SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());    
             }else{
-                log.info("token is null");
+                log.info("토큰이 null 입니다.");
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 log.info("Current authentication: {}", auth);
             }
 
         }catch(Exception ex){
-            throw new RuntimeException("Could not set user authentication in security context", ex);
+            throw new RuntimeException("JwtAuthentication Filter에서 Error 발생", ex);
         }
-
         filterChain.doFilter(request, response);
     }
     
