@@ -29,6 +29,9 @@ public class PetProfileController {
 
     private final PetProfileService petProfileService;
 
+    /**
+     * @todo login 관련 개발 완료 후, @PostMapping에서 family도 create하게 작업
+      */
     @PostMapping
     public ResponseEntity<Map<String, Object>> createPet(@RequestBody PetProfileDto petProfileDto){
         Long id = petProfileService.register(petProfileDto);
