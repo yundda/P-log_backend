@@ -38,7 +38,7 @@ public class RequestEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // inviter -> requester 로 변경
+    // Requester -> requester 로 변경
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
     private UserEntity requester;
@@ -48,7 +48,7 @@ public class RequestEntity extends BaseEntity {
     private PetEntity pet;
 
     @ManyToOne
-    @Column(name = "receiver_id", nullable = true)
+    @JoinColumn(name = "receiver_id", nullable = true)
     private UserEntity receiver;
 
     @Column(name = "receiver_email", nullable = true)

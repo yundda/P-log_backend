@@ -21,10 +21,6 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @Autowired
-    UserResponseDto userResponseDto;
-
-
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserResponseDto>> registerUser(@RequestBody UserRegistrationDto userRegistrationDto) {
         UserResponseDto response = (authService.registerUser(userRegistrationDto));

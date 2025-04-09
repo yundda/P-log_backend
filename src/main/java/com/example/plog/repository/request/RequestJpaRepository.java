@@ -12,12 +12,12 @@ import com.example.plog.repository.user.UserEntity;
 @Repository
 public interface RequestJpaRepository extends JpaRepository<RequestEntity,Long> {
 
-    Optional<RequestEntity> findByInviterAndReceiverAndPet(UserEntity user, UserEntity family, PetEntity pet);
+    Optional<RequestEntity> findByRequesterAndReceiverAndPet(UserEntity user, UserEntity family, PetEntity pet);
     
-    Optional<RequestEntity> findByInviterAndReceiverAndPetAndStatus(UserEntity user, UserEntity owner, PetEntity pet,
+    Optional<RequestEntity> findByRequesterAndReceiverAndPetAndStatus(UserEntity user, UserEntity owner, PetEntity pet,
             Status status);
 
-    Optional<RequestEntity> findByInviterAndRecieverEmailAndPet(UserEntity user, String familyEmail, PetEntity pet);
+    Optional<RequestEntity> findByRequesterAndReceiverEmailAndPet(UserEntity user, String familyEmail, PetEntity pet);
 
 
 }

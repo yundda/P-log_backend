@@ -67,7 +67,7 @@ public class AuthService {
         });
         // 비밀번호 확인
         if (!passwordEncoder.matches(userLoginDto.getPassword(), user.getPassword())) {
-            throw new NotFoundException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidValueException("비밀번호가 일치하지 않습니다.");
         }
         // 토큰 생성
         try{final String token = tokenProvider.createToken(user);
