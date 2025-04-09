@@ -1,7 +1,6 @@
 package com.example.plog.repository.family;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +21,5 @@ public interface FamilyJpaRepository extends JpaRepository<FamilyEntity,Long>{
     @Query("SELECT f.user FROM FamilyEntity f WHERE f.pet.name = :name AND f.role = :role ")
     List<UserEntity> findByPetNameAndRole(String name, Role role);
 
+    List<FamilyEntity> findByUserId(Long userId);
 }

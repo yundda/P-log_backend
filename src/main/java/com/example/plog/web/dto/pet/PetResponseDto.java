@@ -1,4 +1,7 @@
 package com.example.plog.web.dto.pet;
+import java.time.LocalDate;
+
+import com.example.plog.repository.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -18,9 +21,9 @@ public class PetResponseDto {
     private String petName;
     private String petSpecies;
     private String petBreed;
-    private String petGender;
-    private String petBirthday;
-    private String petWeight;
+    private Gender petGender;
+    private LocalDate petBirthday;
+    private Double petWeight;
     private String petImageUrl;
     // private List<PetProfileDto> petProfileList; // 반려동물 프로필 리스트
 

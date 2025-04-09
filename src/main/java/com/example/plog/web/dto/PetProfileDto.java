@@ -22,4 +22,5 @@ public class PetProfileDto {
     private Gender gender; 
     private Double weight;
     private String photo;
+    private Long ownerId;
 }
