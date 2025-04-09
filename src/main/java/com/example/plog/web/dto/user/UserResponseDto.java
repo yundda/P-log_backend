@@ -27,6 +27,6 @@ public class UserResponseDto {
     private String petName; 
     private String token;
 
-    private String redirectUrl;
     private Boolean isRegisteredUser;
+    private Boolean isAlreadyRequested;
 }

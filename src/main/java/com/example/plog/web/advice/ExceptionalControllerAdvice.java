@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.plog.service.exceptions.AuthenticationException;
 import com.example.plog.service.exceptions.AuthorizationException;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
@@ -25,18 +26,22 @@ public class ExceptionalControllerAdvice {
     // 유효성 검사 실패(400) - 유효성 검증 실패 등
     @ExceptionHandler(InvalidValueException.class)
     public ResponseEntity<ApiResponse<Void>> handleInvalidValueException(InvalidValueException ive) {
-        return handleException(ive,HttpStatus.BAD_REQUEST,"VF");
+        return handleException(ive,HttpStatus.BAD_REQUEST,"BR");
     }
 
     // 인증 실패(401) - 로그인, 권한 인증 등
     @ExceptionHandler(AuthorizationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthorizationException(AuthorizationException ae) {
-        return handleException(ae, HttpStatus.UNAUTHORIZED,"AF");
+        return handleException(ae, HttpStatus.UNAUTHORIZED,"UN");
     }
     // NotFound(404) - 중복 이메일, 중복 닉네임, 비밀번호 검증 실패 등
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(NotFoundException nfe) {
         return handleException(nfe, HttpStatus.NOT_FOUND,"NF");
+    }
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException ae) {
+        return handleException(ae, HttpStatus.FORBIDDEN,"FB");
     }
     // 데이터 베이스 오류(500)
     @ExceptionHandler(DatabaseException.class)
