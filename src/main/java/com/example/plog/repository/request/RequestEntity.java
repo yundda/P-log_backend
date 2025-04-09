@@ -38,9 +38,10 @@ public class RequestEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // inviter -> requester 로 변경
     @ManyToOne
-    @JoinColumn(name = "inviter_id", nullable = false)
-    private UserEntity inviter;
+    @JoinColumn(name = "requester_id", nullable = false)
+    private UserEntity requester;
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
@@ -57,18 +58,23 @@ public class RequestEntity extends BaseEntity {
     @Column(name = "status", nullable = false)
     private Status status;
 
-    public RequestEntity(UserEntity inviter, PetEntity pet, UserEntity receiver, Status status) {
-        this.inviter = inviter;
+    @Column(name = "is_requester_owner", nullable = false)
+    private Boolean isRequesterOwner;
+
+    public RequestEntity(UserEntity requester, PetEntity pet, UserEntity receiver, Status status, Boolean isRequesterOwner) {
+        this.requester = requester;
         this.pet = pet;
         this.receiver = receiver;
         this.status = status;
+        this.isRequesterOwner = isRequesterOwner;
     }
 
-    public RequestEntity(UserEntity inviter, PetEntity pet, String receiverEmail, Status status) {
-        this.inviter = inviter;
+    public RequestEntity(UserEntity requester, PetEntity pet, String receiverEmail, Status status, Boolean isRequesterOwner) {
+        this.requester = requester;
         this.pet = pet;
         this.receiverEmail = receiverEmail;
         this.status = status;
+        this.isRequesterOwner = isRequesterOwner;
     }
     
 }
