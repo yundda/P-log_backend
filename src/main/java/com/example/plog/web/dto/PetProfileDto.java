@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class PetProfileDto {
-    private Long id;
+    // private Long id;
     private String name;
     private String species;
     private String breed;

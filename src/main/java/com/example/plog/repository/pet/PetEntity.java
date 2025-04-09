@@ -63,7 +63,7 @@ public class PetEntity extends BaseEntity {
     @Column(name = "photo")
     private String photo;
 
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pet")
     private List<FamilyEntity> familyList = new ArrayList<>();
 
 
