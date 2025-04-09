@@ -14,11 +14,7 @@ import com.example.plog.repository.user.UserEntity;
 @Repository
 public interface FamilyJpaRepository extends JpaRepository<FamilyEntity,Long>{
 
-    Optional<UserEntity> findByUserIdAndPetId(Long userId, Long petId);
-
     void deleteByUserAndPet(UserEntity user, PetEntity pet);
-
-    Optional<UserEntity> findByUser(Long userId, String name);
 
     @Query("SELECT f.pet FROM FamilyEntity f WhERE f.user.id = :userId AND f.pet.name = :name")
     PetEntity findByUserIdAndPetName(Long userId, String name);

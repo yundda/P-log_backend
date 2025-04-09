@@ -43,13 +43,13 @@ public class RequestController {
     }
 
     @GetMapping("/accept/{requestId}")
-    public ResponseEntity<ApiResponse<UserResponseDto>> requestAccept(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long requestId) {
-        UserResponseDto response = requestService.requestAccept(userPrincipal, requestId);
-        return ApiResponse.success(response);
+    public ResponseEntity<ApiResponse<Void>> requestAccept(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long requestId) {
+        requestService.requestAccept(userPrincipal, requestId);
+        return ApiResponse.success();
     }
     @GetMapping("/reject/{requestId}")
-    public ResponseEntity<ApiResponse<UserResponseDto>> requestReject(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long requestId) {
-        UserResponseDto response = requestService.requestReject(userPrincipal, requestId);
-        return ApiResponse.success(response);
+    public ResponseEntity<ApiResponse<Void>> requestReject(@CurrentUser UserPrincipal userPrincipal, @PathVariable Long requestId) {
+        requestService.requestReject(userPrincipal, requestId);
+        return ApiResponse.success();
     }
 }
