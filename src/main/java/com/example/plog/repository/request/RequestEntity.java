@@ -38,7 +38,7 @@ public class RequestEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // inviter -> requester 로 변경
+    // Requester -> requester 로 변경
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
     private UserEntity requester;
