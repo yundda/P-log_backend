@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 
+import com.example.plog.repository.Enum.Role;
 import com.example.plog.repository.Enum.Status;
+import com.example.plog.repository.family.FamilyEntity;
 import com.example.plog.repository.family.FamilyJpaRepository;
 import com.example.plog.repository.pet.PetEntity;
 import com.example.plog.repository.pet.PetJpaRepository;
@@ -41,13 +44,25 @@ public class RequestService {
 
     public UserResponseDto requestPermission(UserPrincipal userPrincipal, RequestPermissionDto requestPermissionDto) {
         Long userId = userPrincipal.getId();
-        UserEntity user = userJpaRepository.findById(userId)
+        String petName = requestPermissionDto.getPetName();
+        UserEntity requester = userJpaRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
-        UserEntity owner = userJpaRepository.findByNickname(requestPermissionDto.getOwnerNick())
+        UserEntity reciever = userJpaRepository.findByNickname(requestPermissionDto.getOwnerNick())
             .orElseThrow(() -> new NotFoundException("해당 owner를 찾을 수 없습니다."));
-        PetEntity pet = user.getPetList().stream().filter(p -> p.getName().equals(requestPermissionDto.getPetName())).findFirst()
-            .orElseThrow(() -> new NotFoundException("해당 owner의 펫을 찾을 수 없습니다."));
-        RequestEntity request = requestJpaRepository.findByInviterAndReceiverAndPet(user,owner,pet)
+        // 펫이 존재하는지 확인
+        if(petJpaRepository.findByNameExists(petName)){ throw new NotFoundException("해당 펫을 찾을 수 없습니다."); }
+        // 펫 이름으로 owner 찾기
+        List<UserEntity> ownerList = familyJpaRepository.findByPetNameAndRole(petName,Role.OWNER);
+        // reciever가 owner인지 확인
+        if(!ownerList.isEmpty()){
+            throw new InvalidValueException("해당 펫의 owner가 없습니다.");
+        }else if(!ownerList.contains(reciever)){
+            throw new InvalidValueException("해당 펫의 owner가 아닙니다.");
+        }
+        // pet정보 찾기
+        PetEntity pet = familyJpaRepository.findByUserIdAndPetName(reciever.getId(), petName);
+
+        RequestEntity request = requestJpaRepository.findByInviterAndReceiverAndPet(requester,reciever,pet)
             .orElse(null);
 
         if(request != null){
@@ -61,7 +76,7 @@ public class RequestService {
                 break;
             }
         }else{
-            request = new RequestEntity(user, pet, owner, Status.PENDING);
+            request = new RequestEntity(requester, pet, reciever, Status.PENDING,false);
         }
         try{
             requestJpaRepository.save(request);
@@ -76,11 +91,23 @@ public class RequestService {
     
     public UserResponseDto requestInvite(UserPrincipal userPrincipal, RequestInviteDto requestInviteDto) {
         Long userId = userPrincipal.getId();
-        UserEntity user = userJpaRepository.findById(userId)
+        String petName = requestInviteDto.getPetName();
+        UserEntity requester = userJpaRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
-        PetEntity pet = user.getPetList().stream()
-            .filter(p -> p.getName().equals(requestInviteDto.getPetName())).findFirst()
-            .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
+
+        // 펫이 존재하는지 확인
+        if(petJpaRepository.findByNameExists(petName)){ throw new NotFoundException("해당 펫을 찾을 수 없습니다."); }
+        // 펫 이름으로 owner 찾기
+        List<UserEntity> ownerList = familyJpaRepository.findByPetNameAndRole(petName,Role.OWNER);
+        // requester가 owner인지 확인
+        if(!ownerList.isEmpty()){
+            throw new InvalidValueException("해당 펫의 owner가 없습니다.");
+        }else if(!ownerList.contains(requester)){
+            throw new InvalidValueException("해당 펫의 owner가 아닙니다.");
+        }
+        // pet정보 찾기
+        PetEntity pet = familyJpaRepository.findByUserIdAndPetName(requester.getId(), petName);
+
         String familyNick = requestInviteDto.getFamilyNick();
         String familyEmail = requestInviteDto.getFamilyEmail();
         RequestEntity request = null;
@@ -93,11 +120,11 @@ public class RequestService {
         if(familyNick != null && !familyNick.isEmpty()){
             family = userJpaRepository.findByNickname(requestInviteDto.getFamilyNick())
             .orElseThrow(() -> new NotFoundException("해당 family를 찾을 수 없습니다."));
-            request = requestJpaRepository.findByInviterAndReceiverAndPet(user,family,pet)
+            request = requestJpaRepository.findByInviterAndReceiverAndPet(requester,family,pet)
                 .orElse(null);
         // 미가입자일 경우 이메일로 검색
         }else if(familyEmail != null && !familyEmail.isEmpty()){
-            request = requestJpaRepository.findByInviterAndRecieverEmailAndPet(user,familyEmail,pet)
+            request = requestJpaRepository.findByInviterAndRecieverEmailAndPet(requester,familyEmail,pet)
                 .orElse(null);
         };
         // 기존 요청이 있는 경우 응답 Status 확인
@@ -109,13 +136,12 @@ public class RequestService {
                     throw new InvalidValueException("해당 요청은 이미 수락되었습니다.");
                 case REJECTED:
                     request.setStatus(Status.PENDING);
-                    request = requestJpaRepository.save(request);
                 break;
             }
         }else {
             request = (family != null)
-            ? new RequestEntity(user, pet, family, Status.PENDING)
-            : new RequestEntity(user, pet, familyEmail, Status.PENDING);
+            ? new RequestEntity(requester, pet, family, Status.PENDING,true)
+            : new RequestEntity(requester, pet, familyEmail, Status.PENDING,true);
         }
             try{
                 requestJpaRepository.save(request);
@@ -142,7 +168,7 @@ public class RequestService {
             throw new AuthorizationException("해당 요청에 권한이 없습니다.");
         }
         return UserResponseDto.builder()
-            .requesterNick(request.getInviter().getNickname())
+            .requesterNick(request.getRequester().getNickname())
             .petName(request.getPet().getName())
             .requestId(requestId)
             .build();
@@ -154,7 +180,7 @@ public class RequestService {
             .orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
         RequestEntity request = requestJpaRepository.findById(requestId)
             .orElseThrow(() -> new NotFoundException("해당 요청을 찾을 수 없습니다."));
-        Long requesterId = request.getInviter().getId();
+        Long requesterId = request.getRequester().getId();
         Long recieverId = request.getReceiver().getId();
         // 요청자가 owner일 경우 -> 수신자 family 등록
         // UserEntity requester = familyJpaRepository.findUserEntityByUserIdAndPetName(requesterId, request.getPet().getName())
