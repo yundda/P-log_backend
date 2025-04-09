@@ -1,4 +1,6 @@
-package com.example.plog.web.dto;
+package com.example.plog.web.dto.user;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +13,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDto {
-    private Long userId;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserLoginDto {
     private String email;
-    private String nickname;
     private String password;
+    private String redirectUrl;
 }

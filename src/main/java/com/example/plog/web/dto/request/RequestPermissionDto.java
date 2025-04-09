@@ -1,17 +1,15 @@
-package com.example.plog.web.dto;
+package com.example.plog.web.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDto {
-    private String email;
-    private String password;
+public class RequestPermissionDto {
+    private String ownerNick;
+    private String petName;
 }
