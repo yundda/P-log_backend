@@ -11,7 +11,7 @@ public interface RequestMapper {
     RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "inviter.id", source = "userId")
+    @Mapping(target = "requester.id", source = "userId")
     @Mapping(target = "receiver.id", source = "ownerId")
     @Mapping(target = "pet.id", source = "petId")
     @Mapping(target = "status", expression = "java(com.example.plog.repository.Enum.Status.PENDING)")
