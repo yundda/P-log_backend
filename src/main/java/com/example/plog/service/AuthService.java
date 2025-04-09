@@ -3,6 +3,7 @@ package com.example.plog.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.plog.repository.request.RequestEntity;
 import com.example.plog.repository.request.RequestJpaRepository;
@@ -34,7 +35,7 @@ public class AuthService {
 
     @Autowired
     RequestJpaRepository requestJpaRepository;
-
+    @Transactional
     public UserResponseDto registerUser(UserRegistrationDto userRegistrationDto) {
         // 이메일 중복 확인
         if (userJpaRepository.findByEmail(userRegistrationDto.getEmail()).isPresent()) {
@@ -49,14 +50,11 @@ public class AuthService {
         userRegistrationDto.setPassword(encodedPassword);
         // 사용자 정보 저장
         UserEntity userEntity = UserMapper.INSTANCE.userRegistrationDtoToUserEntity(userRegistrationDto);
-        try{
-            userJpaRepository.save(userEntity);
-        }catch (Exception e){
-            throw new DatabaseException("회원가입에 실패했습니다.");
-        }
+        userJpaRepository.save(userEntity);
+
         return UserResponseDto.builder()
                 .nickname(userEntity.getNickname())
-                .redirectUrl(userRegistrationDto.getRedirectUrl())
+                .requestId(userRegistrationDto.getRequestId())
                 .build();
     }
 
@@ -70,33 +68,29 @@ public class AuthService {
             throw new InvalidValueException("비밀번호가 일치하지 않습니다.");
         }
         // 토큰 생성
-        try{final String token = tokenProvider.createToken(user);
+        final String token;
+        try{token= tokenProvider.createToken(user);
             log.info("token: {}", token);
-            return UserResponseDto.builder()
-                    .nickname(user.getNickname())
-                    .token(token)
-                    .redirectUrl(userLoginDto.getRedirectUrl())
-                    .build();
         }catch (Exception e){
             log.error("토큰 생성 중 오류 발생: {}", e.getMessage());
-            throw new DatabaseException("로그인 및 토큰 생성에 실패했습니다.");
+            throw new InvalidValueException("로그인 및 토큰 생성에 실패했습니다.");
         }
+        return UserResponseDto.builder()
+        .nickname(user.getNickname())
+        .token(token)
+        .requestId(userLoginDto.getRequestId())
+        .build();
     }
 
     public UserResponseDto getRequestInfo(Long requestId) {
         RequestEntity request = requestJpaRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("해당 초대 요청을 찾을 수 없습니다."));
         String receiverEmail = request.getReceiverEmail();
-        try{
         return UserResponseDto.builder()
                 .requestId(request.getId())
                 .receiverEmail(receiverEmail) // 가입자일 경우 null, 미가입자일 경우 이메일
-                .isRegisteredUser(receiverEmail != null ) // 가입자일 경우 true, 미가입자일 경우 false
+                .isRegisteredUser(receiverEmail==null ) // 가입자일 경우 true, 미가입자일 경우 false
                 .build();
-        }catch (Exception e){
-            log.error("초대 요청 정보를 가져오는 중 오류 발생: {}", e.getMessage());
-            throw new DatabaseException("초대 요청 정보를 가져오는 중 오류가 발생했습니다.");
-        }
     }
     
 }

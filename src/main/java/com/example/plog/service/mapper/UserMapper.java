@@ -6,21 +6,12 @@ import org.mapstruct.factory.Mappers;
 
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.web.dto.user.UserRegistrationDto;
-import com.example.plog.web.dto.user.UserResponseDto;
 @Mapper
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target="id",ignore = true)
     UserEntity userRegistrationDtoToUserEntity(UserRegistrationDto userRegistrationDto);
-
-    @Mapping(target="userId",source = "id")
-    @Mapping(target="requestId",ignore = true)
-    @Mapping(target="requesterNick",ignore = true)
-    @Mapping(target="petName",ignore = true)
-    @Mapping(target="token",ignore = true)
-    UserResponseDto userEntityToUserResponseDto(UserEntity userEntity);
-
 }
 
 // EX)

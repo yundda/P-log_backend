@@ -19,7 +19,7 @@ public class UserPrincipal implements UserDetails {
         return null; // 권한 처리 시 추가
     }
 
-    @Override public String getUsername() { return null; }
+    @Override public String getUsername() { return nickname; }
     @Override public String getPassword() { return null; }
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
