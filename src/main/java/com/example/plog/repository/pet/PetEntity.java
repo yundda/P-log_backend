@@ -8,7 +8,6 @@ import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.Enum.Gender;
 import com.example.plog.repository.family.FamilyEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
