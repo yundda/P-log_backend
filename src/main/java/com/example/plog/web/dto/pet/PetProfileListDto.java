@@ -18,6 +18,6 @@ import lombok.Setter;
 public class PetProfileListDto {
     private Long petId;
     private String petName;
-    private String petPhoto;
+    private String petImageUrl;
     private Role role;
 }

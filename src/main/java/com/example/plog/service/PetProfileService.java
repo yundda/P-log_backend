@@ -17,6 +17,7 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.web.dto.PetProfileDto;
+import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.user.UserRegistrationDto;
 
@@ -71,8 +72,40 @@ public class PetProfileService{
                
     }
 
+    public List<PetProfileListDto> getPetListByUser(UserPrincipal userPrincipal) {
+        List<FamilyEntity> families = familyJpaRepository.findByUserId(userPrincipal.getId());
+
+        List<PetProfileListDto> petList = families.stream().map(family ->{
+            PetEntity petEntity = family.getPet();
+            return PetProfileListDto.builder()
+                    .petId(petEntity.getId())
+                    .petName(petEntity.getName())
+                    .petImageUrl(petEntity.getPhoto())
+                    .role(family.getRole())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return petList;
+    }
     
-    
+    public PetResponseDto getPetById(Long petId) {
+        // 데이터베이스에서 반려동물 엔티티 조회
+        PetEntity petEntity = petJpaRepository.findById(petId)
+            .orElseThrow(() -> new EntityNotFoundException("Pet not found with id: " + petId));
+
+        // PetResponseDto 생성 및 반환
+        return PetResponseDto.builder()
+            .petId(petEntity.getId())
+            .petName(petEntity.getName())
+            .petSpecies(petEntity.getSpecies())
+            .petBreed(petEntity.getBreed())
+            .petBirthday(petEntity.getBirthday())
+            .petGender(petEntity.getGender())
+            .petWeight(petEntity.getWeight())
+            .petImageUrl(petEntity.getPhoto())
+            .build();
+    }
+
     // 반려동물 정보를 업데이트하는 메서드
     public PetResponseDto updatePet(UserPrincipal userPrincipal, PetProfileDto petProfileDto, UserRegistrationDto userRegistrationDto) {
         Long userId = userPrincipal.getId(); // 현재 사용자의 ID를 가져옴
