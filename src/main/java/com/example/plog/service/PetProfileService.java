@@ -32,33 +32,40 @@ public class PetProfileService{
     }
 
     
-    // public void modify(PetProfileDto dto){
-    //     PetEntity entity = petJpaRepository.findById(dto.getId())
-    //     .orElseThrow(() -> new RuntimeException("Pet not found with id: " + dto.getId()));
+    public PetResponseDto updatePet(UserPrincipal userPrincipal, PetProfileDto dto){
+        Long userId = userPrincipal.getId();
+        
+        PetEntity entity = petJpaRepository.findByName(dto.getName())
+        .orElseThrow(() -> new RuntimeException("Pet not found with id: " + dto.getName()));
 
-    //     if(dto.getName()!=null){
-    //         entity.setName(dto.getName());
-    //     }
-    //     if(dto.getSpecies()!=null){
-    //         entity.setSpecies(dto.getSpecies());
-    //     }
-    //     if(dto.getBreed()!=null){
-    //         entity.setBreed(dto.getBreed());
-    //     }
-    //     if(dto.getBirthday()!=null){
-    //         entity.setBirthday(dto.getBirthday());
-    //     }
-    //     if(dto.getGender()!=null){
-    //         entity.setGender(dto.getGender());
-    //     }
-    //     if(dto.getWeight()!=null){
-    //         entity.setWeight(dto.getWeight());
-    //     }
-    //     if(dto.getPhoto()!=null){
-    //         entity.setPhoto(dto.getPhoto());
-    //     }
-    //     petJpaRepository.save(entity);
-    // }
+        if(dto.getName()!=null){
+            entity.setName(dto.getName());
+        }
+        if(dto.getSpecies()!=null){
+            entity.setSpecies(dto.getSpecies());
+        }
+        if(dto.getBreed()!=null){
+            entity.setBreed(dto.getBreed());
+        }
+        if(dto.getBirthday()!=null){
+            entity.setBirthday(dto.getBirthday());
+        }
+        if(dto.getGender()!=null){
+            entity.setGender(dto.getGender());
+        }
+        if(dto.getWeight()!=null){
+            entity.setWeight(dto.getWeight());
+        }
+        if(dto.getPhoto()!=null){
+            entity.setPhoto(dto.getPhoto());
+        }
+        petJpaRepository.save(entity);
+
+        return PetResponseDto.builder()
+        .petId(entity.getId())
+        .petName(entity.getName())
+        .build();
+    }
 
     // public void remove(Long id){
     //     petJpaRepository.deleteById(id);

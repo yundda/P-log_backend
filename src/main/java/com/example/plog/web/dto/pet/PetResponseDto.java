@@ -16,12 +16,11 @@ import lombok.Setter;
 public class PetResponseDto {
     private Long petId;
     private String petName;
-    private String petType;
+    private String petSpecies;
     private String petBreed;
     private String petGender;
-    private String petAge;
+    private String petBirthday;
     private String petWeight;
-    private String petHealthStatus;
     private String petImageUrl;
     // private List<PetProfileDto> petProfileList; // 반려동물 프로필 리스트
 

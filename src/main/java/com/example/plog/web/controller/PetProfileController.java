@@ -1,13 +1,8 @@
 package com.example.plog.web.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,20 +35,20 @@ public class PetProfileController {
     @PostMapping
     public ResponseEntity<ApiResponse<PetResponseDto>> createPet(@CurrentUser UserPrincipal userPrincipal, @RequestBody PetProfileDto petProfileDto){
         PetResponseDto response = petProfileService.createPet(userPrincipal,petProfileDto);
-        // Map<String, Object> response = new HashMap<>();
-        // response.put("message", "반려동물이 성공적으로 등록되었습니다.");
-        // response.put("pet", pet);
 
         return ApiResponse.success(response);
-        // return new ResponseEntity<>(response, HttpStatus.CREATED);
+        
     }
 
-    // @PatchMapping("/{id}")
-    // public ResponseEntity<PetProfileDto> updatePet(@RequestBody PetProfileDto petProfileDto){
-    //     petProfileService.modify(petProfileDto);
-    //     return new ResponseEntity<>(petProfileDto, HttpStatus.OK);
-    // }
-    
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
+            @CurrentUser UserPrincipal userPrincipal, 
+            @RequestBody PetProfileDto petProfileDto) {
+        PetResponseDto response = petProfileService.updatePet(userPrincipal, petProfileDto);
+        return ApiResponse.success(response);
+    }
+
+        
     // @DeleteMapping("/{id}")
     // public ResponseEntity<Void> deletePet(@PathVariable("id") Long id){
     //     petProfileService.remove(id);
