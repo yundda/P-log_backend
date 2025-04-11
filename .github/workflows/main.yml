@@ -1,0 +1,52 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: "temurin"
+
+      - name: Update .env # env 만드는 것
+        run: |
+          echo "DB_PROD_USERNAME=${{ secrets.DB_PROD_USERNAME }}" > .env
+          echo "DB_PROD_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" > .env
+          echo "DB_PROD_URL=${{ secrets.DB_PROD_URL }}" > .env
+
+      - name: Maven Build
+        run: mvn clean package -DskipTests
+
+      - name: Build Docker Image
+        run: |
+          docker build -t yundasun/backend ./
+
+      - name: Push to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - run: docker push yundasun/backend
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull yundasun/backend
+            cd /home/ubuntu/p_log
+            docker-compose down
+            docker-compose up -d
