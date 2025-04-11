@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface PetJpaRepository extends JpaRepository<PetEntity, Long>{
 
 
-    Boolean findByNameExists(String petName);
-
     Optional<PetEntity> findByName(String petName);
+
+    Boolean existsByName(String petName);
 }
