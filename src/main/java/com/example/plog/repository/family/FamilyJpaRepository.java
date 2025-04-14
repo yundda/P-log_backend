@@ -23,4 +23,6 @@ public interface FamilyJpaRepository extends JpaRepository<FamilyEntity,Long>{
     List<UserEntity> findByPetNameAndRole(String name, Role role);
 
     List<FamilyEntity> findByUserId(Long userId);
+
+    void deleteByPet(PetEntity pet);
 }

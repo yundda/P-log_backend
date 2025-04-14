@@ -37,7 +37,7 @@ public class PetProfileService{
     @Autowired
     UserJpaRepository userJpaRepository;
     
-    public PetResponseDto createPet(UserPrincipal userPrincipal, PetProfileDto petProfileDto, UserRegistrationDto userRegistrationDto) {
+    public PetResponseDto createPet(UserPrincipal userPrincipal, PetProfileDto petProfileDto) {
         Long userId = userPrincipal.getId();
         petProfileDto.setOwnerId(userId);
 
@@ -107,36 +107,38 @@ public class PetProfileService{
     }
 
     // 반려동물 정보를 업데이트하는 메서드
-    public PetResponseDto updatePet(UserPrincipal userPrincipal, PetProfileDto petProfileDto, UserRegistrationDto userRegistrationDto) {
+    public PetResponseDto updatePet(UserPrincipal userPrincipal, Long petId, PetProfileDto petProfileDto) {
         Long userId = userPrincipal.getId(); // 현재 사용자의 ID를 가져옴
         petProfileDto.setOwnerId(userId); // 반려동물 프로필 DTO에 소유자 ID 설정
 
         // 반려동물 이름으로 데이터베이스에서 반려동물 엔티티 조회
-        PetEntity entity = petJpaRepository.findByName(petProfileDto.getName())
-            .orElseThrow(() -> new RuntimeException("Pet not found with name: " + petProfileDto.getName()));
+        PetEntity entity = petJpaRepository.findById(petId)
+            .orElseThrow(() -> new RuntimeException("Pet not found with petId: " +petId));
 
         // DTO의 각 필드가 null이 아닌 경우 엔티티의 해당 필드를 업데이트
-        if (petProfileDto.getName() != null) {
-            entity.setName(petProfileDto.getName());
+        if (petProfileDto.getPetName() != null) {
+            entity.setName(petProfileDto.getPetName());
         }
-        if (petProfileDto.getSpecies() != null) {
-            entity.setSpecies(petProfileDto.getSpecies());
+        if (petProfileDto.getPetSpecies() != null) {
+            entity.setSpecies(petProfileDto.getPetSpecies());
         }
-        if (petProfileDto.getBreed() != null) {
-            entity.setBreed(petProfileDto.getBreed());
+        if (petProfileDto.getPetBreed() != null) {
+            entity.setBreed(petProfileDto.getPetBreed());
         }
-        if (petProfileDto.getBirthday() != null) {
-            entity.setBirthday(petProfileDto.getBirthday());
+        if (petProfileDto.getPetBirthday() != null) {
+            entity.setBirthday(petProfileDto.getPetBirthday());
         }
-        if (petProfileDto.getGender() != null) {
-            entity.setGender(petProfileDto.getGender());
+        if (petProfileDto.getPetGender() != null) {
+            entity.setGender(petProfileDto.getPetGender());
         }
-        if (petProfileDto.getWeight() != null) {
-            entity.setWeight(petProfileDto.getWeight());
+        if (petProfileDto.getPetWeight() != null) {
+            entity.setWeight(petProfileDto.getPetWeight());
         }
-        if (petProfileDto.getPhoto() != null) {
-            entity.setPhoto(petProfileDto.getPhoto());
+        if (petProfileDto.getPetPhoto() != null) {
+            entity.setPhoto(petProfileDto.getPetPhoto());
         }
+
+        petJpaRepository.save(entity);
 
         // 업데이트된 엔티티를 기반으로 응답 DTO 생성 및 반환
         return PetResponseDto.builder()
@@ -159,6 +161,8 @@ public class PetProfileService{
         }
 
         // 데이터베이스에서 반려동물 엔티티 삭제
+        familyJpaRepository.deleteByPet(petId);
         petJpaRepository.deleteById(petId);
+        
     }
 }
