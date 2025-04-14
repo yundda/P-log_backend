@@ -10,7 +10,6 @@ import com.example.plog.repository.request.RequestJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.TokenProvider;
-import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.mapper.UserMapper;
