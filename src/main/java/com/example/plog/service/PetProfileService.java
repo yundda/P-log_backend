@@ -161,7 +161,8 @@ public class PetProfileService{
         }
 
         // 데이터베이스에서 반려동물 엔티티 삭제
-        familyJpaRepository.deleteByPet(petId);
+        // 수정 필요
+        // familyJpaRepository.deleteByPetId(petId);
         petJpaRepository.deleteById(petId);
         
     }

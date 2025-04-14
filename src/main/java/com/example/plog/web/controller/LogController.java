@@ -65,11 +65,11 @@ public class LogController {
         
     }
 
-    @GetMapping("/haalth/{petId}")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getHealthLogs(
-        @PathVariable Long petId,
-        @CurrentUser UserPrincipal userPrincipal
-    ){
-        return
-    }
+    // @GetMapping("/haalth/{petId}")
+    // public ResponseEntity<ApiResponse<Map<String, Object>>> getHealthLogs(
+    //     @PathVariable Long petId,
+    //     @CurrentUser UserPrincipal userPrincipal
+    // ){
+    //     return
+    // }
 }
