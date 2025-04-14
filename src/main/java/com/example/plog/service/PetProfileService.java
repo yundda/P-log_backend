@@ -61,13 +61,13 @@ public class PetProfileService{
         // PetResponseDto 생성 및 반환
         return PetResponseDto.builder()
             .petId(petEntity.getId())
-            .petName(petEntity.getName())
-            .petSpecies(petEntity.getSpecies())
-            .petBreed(petEntity.getBreed())
-            .petBirthday(petEntity.getBirthday())
-            .petGender(petEntity.getGender())
-            .petWeight(petEntity.getWeight())
-            .petImageUrl(petEntity.getPhoto())
+            .petName(petEntity.getPetName())
+            .petSpecies(petEntity.getPetSpecies())
+            .petBreed(petEntity.getPetBreed())
+            .petBirthday(petEntity.getPetBirthday())
+            .petGender(petEntity.getPetGender())
+            .petWeight(petEntity.getPetWeight())
+            .petImageUrl(petEntity.getPetPhoto())
             .build();
                
     }
@@ -79,8 +79,8 @@ public class PetProfileService{
             PetEntity petEntity = family.getPet();
             return PetProfileListDto.builder()
                     .petId(petEntity.getId())
-                    .petName(petEntity.getName())
-                    .petImageUrl(petEntity.getPhoto())
+                    .petName(petEntity.getPetName())
+                    .petImageUrl(petEntity.getPetPhoto())
                     .role(family.getRole())
                     .build();
         }).collect(Collectors.toList());
@@ -96,13 +96,13 @@ public class PetProfileService{
         // PetResponseDto 생성 및 반환
         return PetResponseDto.builder()
             .petId(petEntity.getId())
-            .petName(petEntity.getName())
-            .petSpecies(petEntity.getSpecies())
-            .petBreed(petEntity.getBreed())
-            .petBirthday(petEntity.getBirthday())
-            .petGender(petEntity.getGender())
-            .petWeight(petEntity.getWeight())
-            .petImageUrl(petEntity.getPhoto())
+            .petName(petEntity.getPetName())
+            .petSpecies(petEntity.getPetSpecies())
+            .petBreed(petEntity.getPetBreed())
+            .petBirthday(petEntity.getPetBirthday())
+            .petGender(petEntity.getPetGender())
+            .petWeight(petEntity.getPetWeight())
+            .petImageUrl(petEntity.getPetPhoto())
             .build();
     }
 
@@ -117,25 +117,25 @@ public class PetProfileService{
 
         // DTO의 각 필드가 null이 아닌 경우 엔티티의 해당 필드를 업데이트
         if (petProfileDto.getPetName() != null) {
-            entity.setName(petProfileDto.getPetName());
+            entity.setPetName(petProfileDto.getPetName());
         }
         if (petProfileDto.getPetSpecies() != null) {
-            entity.setSpecies(petProfileDto.getPetSpecies());
+            entity.setPetSpecies(petProfileDto.getPetSpecies());
         }
         if (petProfileDto.getPetBreed() != null) {
-            entity.setBreed(petProfileDto.getPetBreed());
+            entity.setPetBreed(petProfileDto.getPetBreed());
         }
         if (petProfileDto.getPetBirthday() != null) {
-            entity.setBirthday(petProfileDto.getPetBirthday());
+            entity.setPetBirthday(petProfileDto.getPetBirthday());
         }
         if (petProfileDto.getPetGender() != null) {
-            entity.setGender(petProfileDto.getPetGender());
+            entity.setPetGender(petProfileDto.getPetGender());
         }
         if (petProfileDto.getPetWeight() != null) {
-            entity.setWeight(petProfileDto.getPetWeight());
+            entity.setPetWeight(petProfileDto.getPetWeight());
         }
         if (petProfileDto.getPetPhoto() != null) {
-            entity.setPhoto(petProfileDto.getPetPhoto());
+            entity.setPetPhoto(petProfileDto.getPetPhoto());
         }
 
         petJpaRepository.save(entity);
@@ -143,13 +143,13 @@ public class PetProfileService{
         // 업데이트된 엔티티를 기반으로 응답 DTO 생성 및 반환
         return PetResponseDto.builder()
             .petId(entity.getId())
-            .petName(entity.getName())
-            .petSpecies(entity.getSpecies())
-            .petBreed(entity.getBreed())
-            .petBirthday(entity.getBirthday())
-            .petGender(entity.getGender())
-            .petWeight(entity.getWeight())
-            .petImageUrl(entity.getPhoto())
+            .petName(entity.getPetName())
+            .petSpecies(entity.getPetSpecies())
+            .petBreed(entity.getPetBreed())
+            .petBirthday(entity.getPetBirthday())
+            .petGender(entity.getPetGender())
+            .petWeight(entity.getPetWeight())
+            .petImageUrl(entity.getPetPhoto())
             .build();
     }
 
