@@ -48,6 +48,6 @@ public class PetlogEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private Type tpye;
+    private Type type;
 
 }

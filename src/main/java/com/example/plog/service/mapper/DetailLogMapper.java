@@ -6,9 +6,9 @@ import org.mapstruct.factory.Mappers;
 import com.example.plog.repository.detaillog.DetaillogEntity;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
 
-@Mapper(componentModel = "spring")
-public interface DetailLogMapper {
-    DetailLogMapper INSTANCE = Mappers.getMapper(DetailLogMapper.class);
+// @Mapper(componentModel = "spring")
+// public interface DetailLogMapper {
+//     DetailLogMapper INSTANCE = Mappers.getMapper(DetailLogMapper.class);
 
-    DetaillogEntity toEntity(DetailLogDto dto);
-}
+//     DetaillogEntity toEntity(DetailLogDto dto);
+// }

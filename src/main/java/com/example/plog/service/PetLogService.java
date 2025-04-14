@@ -174,7 +174,7 @@ public class PetLogService {
 
         return detaillogEntities.stream()
                 .map(this::convertToDetailLogDto)
-                .collect(Collectors.toList())
+                .collect(Collectors.toList());
     }
 
     public DetailLogDto convertToDetailLogDto(DetaillogEntity entity){
@@ -188,13 +188,13 @@ public class PetLogService {
                 .build();
     }
 
-    private List<HealthLogDto> getHealthLog(Long petId){
-        List<HealthlogEntity> healthlogEntities = healthlogJpaRepository.findAllByPetId(petId);
+    // private List<HealthLogDto> getHealthLog(Long petId){
+    //     List<HealthlogEntity> healthlogEntities = healthlogJpaRepository.findAllByPetId(petId);
 
-        return healthlogEntities.stream()
-                .map(this::convertToHealthLogDto)
-                .collect(Collectors.toList());
-    }
+    //     return healthlogEntities.stream()
+    //             .map(this::convertToHealthLogDto)
+    //             .collect(Collectors.toList());
+    // }
 
     private HealthLogDto convertHealthLogDto(HealthlogEntity entity){
         if(entity == null) return null;
