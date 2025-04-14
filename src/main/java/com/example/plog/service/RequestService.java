@@ -125,7 +125,7 @@ public class RequestService {
         }
         return UserResponseDto.builder()
             .requesterNick(request.getRequester().getNickname())
-            .petName(request.getPet().getName())
+            .petName(request.getPet().getPetName())
             .requestId(requestId)
             .build();
     }
@@ -202,7 +202,7 @@ public class RequestService {
     }
     private PetEntity findPetOrThrowIfNotFound(String petName, UserEntity receiver) {
            // 펫이 존재하는지 확인
-           if(!petJpaRepository.existsByName(petName)){ throw new NotFoundException("해당 이름의 펫을 찾을 수 없습니다."); }
+           if(!petJpaRepository.existsByPetName(petName)){ throw new NotFoundException("해당 이름의 펫을 찾을 수 없습니다."); }
            // 펫 이름으로 owner 찾기
            List<UserEntity> ownerList = familyJpaRepository.findByPetNameAndRole(petName,Role.OWNER);
            // receiver가 owner인지 확인

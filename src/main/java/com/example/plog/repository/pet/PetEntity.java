@@ -40,29 +40,30 @@ public class PetEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "pet_name", nullable = false)
+    private String petName;
 
-    @Column(name = "species", nullable = false)
-    private String species;
+    @Column(name = "pet_species", nullable = false)
+    private String petSpecies;
 
-    @Column(name = "breed", nullable = false)
-    private String breed;
+    @Column(name = "pet_breed", nullable = false)
+    private String petBreed;
 
-    @Column(name = "birthday", nullable = false)
-    private LocalDate birthday;
+    @Column(name = "pet_birthday", nullable = false)
+    private LocalDate petBirthday;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
-    private Gender gender;
+    @Column(name = "pet_gender", nullable = false)
+    private Gender petGender;
 
-    @Column(name = "weight", nullable = false)
-    private Double weight;
+    @Column(name = "pet_weight", nullable = false)
+    private Double petWeight;
 
-    @Column(name = "photo")
-    private String photo;
+    @Column(name = "pet_photo")
+    private String petPhoto;
 
     @OneToMany(mappedBy = "pet")
+    @Builder.Default
     private List<FamilyEntity> familyList = new ArrayList<>();
 
 
