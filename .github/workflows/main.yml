@@ -49,4 +49,3 @@ jobs:
             docker pull yundasun/backend
             cd /home/ubuntu/p_log
             docker compose down
-            docker compose up -d
