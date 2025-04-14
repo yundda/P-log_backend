@@ -12,6 +12,7 @@ public interface PetProfileMapper {
     PetProfileMapper INSTANCE = Mappers.getMapper(PetProfileMapper.class);
     
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "familyList", ignore = true)
     PetEntity petProfileDtoToPetEntity(PetProfileDto dto);
 
 
