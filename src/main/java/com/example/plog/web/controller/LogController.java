@@ -62,6 +62,7 @@ public class LogController {
         data.put("detailLogs", detailLogs);
 
         return ApiResponse.success(data);
+        
     }
 
     @GetMapping("/haalth/{petId}")
