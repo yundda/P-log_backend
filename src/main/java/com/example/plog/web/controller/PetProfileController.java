@@ -1,8 +1,6 @@
 package com.example.plog.web.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +39,8 @@ public class PetProfileController {
       @PostMapping
       public ResponseEntity<ApiResponse<PetResponseDto>> createPet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @RequestBody PetProfileDto petProfileDto,
-              @RequestBody UserRegistrationDto userRegistrationDto) {
-          PetResponseDto response = petProfileService.createPet(userPrincipal, petProfileDto, userRegistrationDto);
+              @RequestBody PetProfileDto petProfileDto) {
+          PetResponseDto response = petProfileService.createPet(userPrincipal, petProfileDto);
           return ApiResponse.success(response);
       }
 
@@ -64,14 +61,14 @@ public class PetProfileController {
               @CurrentUser UserPrincipal userPrincipal, 
               @RequestBody PetProfileDto petProfileDto,
               @RequestBody UserRegistrationDto userRegistrationDto) {
-          PetResponseDto response = petProfileService.updatePet(userPrincipal, petProfileDto, userRegistrationDto);
-          return ApiResponse.success(response);
+        PetResponseDto response = petProfileService.updatePet(userPrincipal, petProfileDto, userRegistrationDto);
+        return ApiResponse.success(response);
       }
  
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deletePet(@PathVariable("id") Long petId){
-        petProfileService.deletePet(petId);
-        return ApiResponse.success();
-    }
+      @DeleteMapping("/{id}")
+      public ResponseEntity<ApiResponse<Void>> deletePet(@PathVariable("id") Long petId){
+          petProfileService.deletePet(petId);
+          return ApiResponse.success();
+      }
 
 }

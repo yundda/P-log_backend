@@ -37,7 +37,7 @@ public class PetProfileService{
     @Autowired
     UserJpaRepository userJpaRepository;
     
-    public PetResponseDto createPet(UserPrincipal userPrincipal, PetProfileDto petProfileDto, UserRegistrationDto userRegistrationDto) {
+    public PetResponseDto createPet(UserPrincipal userPrincipal, PetProfileDto petProfileDto) {
         Long userId = userPrincipal.getId();
         petProfileDto.setOwnerId(userId);
 
