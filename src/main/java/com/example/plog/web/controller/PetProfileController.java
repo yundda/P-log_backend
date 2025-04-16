@@ -40,7 +40,6 @@ public class PetProfileController {
       public ResponseEntity<ApiResponse<PetResponseDto>> createPet(
               @CurrentUser UserPrincipal userPrincipal, 
               @RequestBody PetCreateDto petCreateDto) {
-                log.info("petprofiledto : {}", petCreateDto);
           PetResponseDto response = petProfileService.createPet(userPrincipal, petCreateDto);
           return ApiResponse.success(response);
       }

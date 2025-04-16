@@ -17,11 +17,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HealthLogDto {
+public class HealthLogResponseDto {
     private String vaccination;
     @JsonProperty("vaccination_log")
-    private Boolean vaccinationLog;
+    private Boolean vaccination_log;
     private String hospital;
-    @Builder.Default
-    private LocalTime hospitalLog = LocalTime.now();
+    private LocalTime hospital_log;
 }

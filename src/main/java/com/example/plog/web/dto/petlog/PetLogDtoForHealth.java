@@ -1,9 +1,9 @@
-package com.example.plog.web.dto.healthlog;
+package com.example.plog.web.dto.petlog;
 
 import java.time.LocalTime;
 
+import com.example.plog.repository.Enum.Type;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +17,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HealthLogDto {
+public class PetLogDtoForHealth {
+    private String name;
+    private Long petId;
+    private Long userId;
+    private Type type;
+    private Long logId;
     private String vaccination;
-    @JsonProperty("vaccination_log")
-    private Boolean vaccinationLog;
+    private Boolean vaccination_log;
     private String hospital;
-    @Builder.Default
-    private LocalTime hospitalLog = LocalTime.now();
+    private LocalTime hospital_log;
 }

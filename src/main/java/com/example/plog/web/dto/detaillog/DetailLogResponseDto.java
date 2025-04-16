@@ -17,12 +17,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DetailLogDto {
-    @Builder.Default
-    private LocalTime logTime = LocalTime.now();
+public class DetailLogResponseDto {
+    private Long log_id;
+    private LocalTime log_time;
     private Mealtype mealType;
     private String place;
     private Integer price;
-    private Integer takeTime;
+    private Integer take_time;
     private String memo;
 }
