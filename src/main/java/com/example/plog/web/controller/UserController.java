@@ -34,7 +34,7 @@ public class UserController {
         return ApiResponse.success();
     }
 
-    @GetMapping("/leavePet/{petName}")
+    @GetMapping("/leave/{petName}")
     public ResponseEntity<ApiResponse<Void>> leavePet(@CurrentUser UserPrincipal userPrincipal, @PathVariable String petName) {
         userService.leavePet(userPrincipal,petName);
         return ApiResponse.success();
