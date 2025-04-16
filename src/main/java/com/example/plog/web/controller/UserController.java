@@ -34,9 +34,15 @@ public class UserController {
         return ApiResponse.success();
     }
 
-    @GetMapping("/leavePet/{petName}")
+    @GetMapping("/leave/{petName}")
     public ResponseEntity<ApiResponse<Void>> leavePet(@CurrentUser UserPrincipal userPrincipal, @PathVariable String petName) {
         userService.leavePet(userPrincipal,petName);
         return ApiResponse.success();
+    }
+
+    @GetMapping("/family/{petName}")
+    public ResponseEntity<ApiResponse<UserResponseDto>> getFamily(@CurrentUser UserPrincipal userPrincipal, @PathVariable String petName) {
+        UserResponseDto response = userService.getFamilyList(userPrincipal, petName);
+        return ApiResponse.success(response);
     }
 }

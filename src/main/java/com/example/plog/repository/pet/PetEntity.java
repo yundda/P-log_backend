@@ -66,7 +66,4 @@ public class PetEntity extends BaseEntity {
     @Builder.Default
     private List<FamilyEntity> familyList = new ArrayList<>();
 
-
-
-
 }

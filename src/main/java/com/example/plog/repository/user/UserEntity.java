@@ -52,6 +52,7 @@ public class UserEntity extends BaseEntity {
     private String password;
 
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private List<FamilyEntity> familyList = new ArrayList<>();
 
     @Transient

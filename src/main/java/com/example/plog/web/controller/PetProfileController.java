@@ -17,9 +17,10 @@ import com.example.plog.config.security.CurrentUser;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.PetProfileService;
 import com.example.plog.web.dto.ApiResponse;
-import com.example.plog.web.dto.PetProfileDto;
+import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
+import com.example.plog.web.dto.pet.PetUpdateDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,9 +39,9 @@ public class PetProfileController {
       @PostMapping
       public ResponseEntity<ApiResponse<PetResponseDto>> createPet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @RequestBody PetProfileDto petProfileDto) {
-                log.info("petprofiledto : {}", petProfileDto);
-          PetResponseDto response = petProfileService.createPet(userPrincipal, petProfileDto);
+              @RequestBody PetCreateDto petCreateDto) {
+                log.info("petprofiledto : {}", petCreateDto);
+          PetResponseDto response = petProfileService.createPet(userPrincipal, petCreateDto);
           return ApiResponse.success(response);
       }
 
@@ -50,24 +51,29 @@ public class PetProfileController {
         return ApiResponse.success(petList);
       }
 
-      @GetMapping("/{id}")
-      public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(@PathVariable("id") Long petId) {
-        PetResponseDto response = petProfileService.getPetById(petId);
+      @PostMapping("/profile/{petName}")
+      public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(
+        @CurrentUser UserPrincipal userPrincipal,
+        @PathVariable String name
+        ) {
+        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, name);
         return ApiResponse.success(response);
     }
 
-      @PatchMapping("/{id}")
+      @PatchMapping("/update")
       public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @PathVariable Long id,
-              @RequestBody PetProfileDto petProfileDto) {
-        PetResponseDto response = petProfileService.updatePet(userPrincipal, id, petProfileDto);
+              @RequestBody PetUpdateDto petUpdateDto) {
+        PetResponseDto response = petProfileService.updatePet(userPrincipal, petUpdateDto);
         return ApiResponse.success(response);
       }
  
-      @DeleteMapping("/{id}")
-      public ResponseEntity<ApiResponse<Void>> deletePet(@PathVariable("id") Long petId){
-          petProfileService.deletePet(petId);
+      @DeleteMapping("/delete/{petName}")
+      public ResponseEntity<ApiResponse<Void>> deletePet(
+        @CurrentUser UserPrincipal userPrincipal,
+        @PathVariable String name
+        ){
+          petProfileService.deletePet(userPrincipal, name);
           return ApiResponse.success();
       }
 

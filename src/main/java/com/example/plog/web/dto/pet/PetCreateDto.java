@@ -1,6 +1,4 @@
 package com.example.plog.web.dto.pet;
-import java.time.LocalDate;
-
 import com.example.plog.repository.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -16,12 +14,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PetResponseDto {
+public class PetCreateDto {
     private String petName;
     private String petSpecies;
     private String petBreed;
+    private String petBirthday;
     private Gender petGender;
-    private LocalDate petBirthday;
     private Double petWeight;
-    private String petImageUrl;
+    private String petPhoto;
+
 }
