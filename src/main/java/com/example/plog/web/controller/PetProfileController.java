@@ -18,6 +18,7 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.PetProfileService;
 import com.example.plog.web.dto.ApiResponse;
 import com.example.plog.web.dto.PetProfileDto;
+import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 
@@ -38,9 +39,9 @@ public class PetProfileController {
       @PostMapping
       public ResponseEntity<ApiResponse<PetResponseDto>> createPet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @RequestBody PetProfileDto petProfileDto) {
-                log.info("petprofiledto : {}", petProfileDto);
-          PetResponseDto response = petProfileService.createPet(userPrincipal, petProfileDto);
+              @RequestBody PetCreateDto petCreateDto) {
+                log.info("petprofiledto : {}", petCreateDto);
+          PetResponseDto response = petProfileService.createPet(userPrincipal, petCreateDto);
           return ApiResponse.success(response);
       }
 

@@ -97,12 +97,12 @@ public class UserService {
     }
     @Transactional
     public void leavePet(UserPrincipal userPrincipal, String petName) {
+        try {
         UserEntity user = getUserById(userPrincipal.getId());
         // 펫 정보 조회
         PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
             .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
         // 펫 삭제
-        try {
             familyJpaRepository.deleteByUserAndPet(user,pet);
         } catch (DataAccessException e) {
             log.error("가족에서 빠지기 DB 오류: {}", e.getMessage());

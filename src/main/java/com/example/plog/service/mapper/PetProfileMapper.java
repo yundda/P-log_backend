@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.example.plog.repository.pet.PetEntity;
-import com.example.plog.web.dto.PetProfileDto;
+import com.example.plog.web.dto.pet.PetCreateDto;
 
 @Mapper
 public interface PetProfileMapper {
@@ -13,7 +13,7 @@ public interface PetProfileMapper {
     
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "familyList", ignore = true)
-    PetEntity petProfileDtoToPetEntity(PetProfileDto dto);
+    PetEntity petCreateDtoToPetEntity(PetCreateDto dto);
 
 
     // PetProfileDto petEntityToPetProfileDto(PetEntity entity);

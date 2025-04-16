@@ -52,7 +52,7 @@ public class RequestService {
     public UserResponseDto requestPermission(UserPrincipal userPrincipal, RequestPermissionDto requestPermissionDto) {
         UserEntity requester = userService.getUserById(userPrincipal.getId());
         UserEntity receiver = userService.getUserByNickname(requestPermissionDto.getOwnerNick());
-        PetEntity pet = findPetOrThrowIfNotFound(requestPermissionDto.getPetName(), requester);
+        PetEntity pet = findPetOrThrowIfNotFound(requestPermissionDto.getPetName(), receiver);
         RequestEntity request = requestJpaRepository.findByRequesterAndReceiverAndPet(requester,receiver,pet)
             .orElse(null);
 
@@ -205,6 +205,7 @@ public class RequestService {
            if(!petJpaRepository.existsByPetName(petName)){ throw new NotFoundException("해당 이름의 펫을 찾을 수 없습니다."); }
            // 펫 이름으로 owner 찾기
            List<UserEntity> ownerList = familyJpaRepository.findByPetNameAndRole(petName,Role.OWNER);
+           log.info("ownerList:{}",ownerList);
            // receiver가 owner인지 확인
            if(ownerList.isEmpty()){
                throw new NotFoundException("해당 펫의 주인이 없습니다.");
