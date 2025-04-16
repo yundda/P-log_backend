@@ -1,5 +1,7 @@
 package com.example.plog.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -109,4 +111,16 @@ public class UserService {
             throw new DatabaseException("가족에서 빠지기 DB 업데이트에 실패했습니다.");
         }
     }
+
+    public UserResponseDto getFamilyList(UserPrincipal userPrincipal, String petName) {
+            UserEntity user = getUserById(userPrincipal.getId());
+            PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
+            .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
+            List<String> familyNickname = pet.getFamilyList().stream().map((family) -> family.getUser().getNickname()).toList();
+            return UserResponseDto.builder()
+                .familyList(familyNickname)
+                .build();
+    }
+
+    
 }

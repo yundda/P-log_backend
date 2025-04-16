@@ -1,6 +1,8 @@
 package com.example.plog.web.dto.user;
 
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -29,4 +31,5 @@ public class UserResponseDto {
 
     private Boolean isRegisteredUser;
     private Boolean isAlreadyRequested;
+    private List<String> familyList;
 }
