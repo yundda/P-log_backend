@@ -17,9 +17,7 @@ import com.example.plog.config.security.CurrentUser;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.PetProfileService;
 import com.example.plog.web.dto.ApiResponse;
-import com.example.plog.web.dto.PetProfileDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
-import com.example.plog.web.dto.pet.PetNameDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.pet.PetUpdateDto;
@@ -53,10 +51,10 @@ public class PetProfileController {
         return ApiResponse.success(petList);
       }
 
-      @PostMapping("/profile")
+      @PostMapping("/profile/{petName}")
       public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(
         @CurrentUser UserPrincipal userPrincipal,
-        @RequestBody PetNameDto name
+        @PathVariable String name
         ) {
         PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, name);
         return ApiResponse.success(response);
@@ -70,10 +68,11 @@ public class PetProfileController {
         return ApiResponse.success(response);
       }
  
-      @DeleteMapping("/delete")
+      @DeleteMapping("/delete/{petName}")
       public ResponseEntity<ApiResponse<Void>> deletePet(
         @CurrentUser UserPrincipal userPrincipal,
-        @RequestBody PetNameDto name){
+        @PathVariable String name
+        ){
           petProfileService.deletePet(userPrincipal, name);
           return ApiResponse.success();
       }
