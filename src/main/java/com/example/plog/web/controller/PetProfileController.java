@@ -19,8 +19,10 @@ import com.example.plog.service.PetProfileService;
 import com.example.plog.web.dto.ApiResponse;
 import com.example.plog.web.dto.PetProfileDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
+import com.example.plog.web.dto.pet.PetNameDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
+import com.example.plog.web.dto.pet.PetUpdateDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,24 +53,28 @@ public class PetProfileController {
         return ApiResponse.success(petList);
       }
 
-      @GetMapping("/{id}")
-      public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(@PathVariable("id") Long petId) {
-        PetResponseDto response = petProfileService.getPetById(petId);
+      @PostMapping("/profile")
+      public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(
+        @CurrentUser UserPrincipal userPrincipal,
+        @RequestBody PetNameDto name
+        ) {
+        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, name);
         return ApiResponse.success(response);
     }
 
-      @PatchMapping("/{id}")
+      @PatchMapping("/update")
       public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @PathVariable Long id,
-              @RequestBody PetProfileDto petProfileDto) {
-        PetResponseDto response = petProfileService.updatePet(userPrincipal, id, petProfileDto);
+              @RequestBody PetUpdateDto petUpdateDto) {
+        PetResponseDto response = petProfileService.updatePet(userPrincipal, petUpdateDto);
         return ApiResponse.success(response);
       }
  
-      @DeleteMapping("/{id}")
-      public ResponseEntity<ApiResponse<Void>> deletePet(@PathVariable("id") Long petId){
-          petProfileService.deletePet(petId);
+      @DeleteMapping("/delete")
+      public ResponseEntity<ApiResponse<Void>> deletePet(
+        @CurrentUser UserPrincipal userPrincipal,
+        @RequestBody PetNameDto name){
+          petProfileService.deletePet(userPrincipal, name);
           return ApiResponse.success();
       }
 
