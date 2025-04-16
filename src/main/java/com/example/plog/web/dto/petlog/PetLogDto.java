@@ -19,6 +19,7 @@ import lombok.Setter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PetLogDto {
+    private String name;
     private Long petId;
     private Long userId;
     private Type type;
@@ -29,8 +30,4 @@ public class PetLogDto {
     private Integer price;
     private Integer takeTime;
     private String memo;
-    private LocalTime healthLogTime;
-    private Boolean vaccinatonLog;
-    private String vaccination;
-    private String hospital;
 }

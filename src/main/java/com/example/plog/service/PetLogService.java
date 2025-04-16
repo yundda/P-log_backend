@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 import com.example.plog.repository.Enum.Type;
 import com.example.plog.repository.detaillog.DetaillogEntity;
 import com.example.plog.repository.detaillog.DetaillogJpaRepository;
+import com.example.plog.repository.family.FamilyEntity;
+import com.example.plog.repository.family.FamilyJpaRepository;
 import com.example.plog.repository.healthlog.HealthlogEntity;
 import com.example.plog.repository.healthlog.HealthlogJpaRepository;
 import com.example.plog.repository.pet.PetEntity;
+import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.repository.petlog.PetlogEntity;
 import com.example.plog.repository.petlog.PetlogJpaRepository;
 import com.example.plog.repository.user.UserEntity;
@@ -54,21 +57,33 @@ public class PetLogService {
     @Autowired
     HealthlogJpaRepository healthlogJpaRepository;
 
-    /**
-     * 새로운 반려동물 로그를 생성하고, 필요 시 관련된 상세 로그를 생성합니다.
-     * 저장된 데이터를 포함하는 PetLogDto를 반환합니다.
-     *
-     * @param dto 반려동물 로그와 상세 로그 정보를 포함하는 DTO
-     * @return 생성된 반려동물 로그와 상세 로그 정보를 포함하는 PetLogDto
-     */
-    public PetLogDto createDetailLog(PetLogDetailLogDto dto) {
-        PetlogEntity petlogEntity = convertToPetlogEntity(dto.getPetlog());
+    @Autowired
+    FamilyJpaRepository familyJpaRepository;
+
+    @Autowired
+    PetJpaRepository petJpaRepository;
+
+    
+    public PetLogDto createDetailLog(PetLogDetailLogDto petLogDetailLogDto) {
+        String petName = petLogDetailLogDto.getPetlog().getName();
+        PetEntity petEntity = petJpaRepository.findByPetName(petName)
+                                .orElseThrow(() -> new RuntimeException("해당 이름의 반려동물을 찾을 수 없습니다. name: " + petName));
+
+        FamilyEntity familyEntity = familyJpaRepository.findById(petEntity.getId())
+                                .orElseThrow(() -> new RuntimeException("해당 ID의 FamilyEntity를 찾을 수 없습니다. ID: " + petEntity.getId()));
+
+        Long userId = familyEntity.getUser().getId();
+
+        petLogDetailLogDto.getPetlog().setPetId(petEntity.getId());
+        petLogDetailLogDto.getPetlog().setUserId(userId);
+
+        PetlogEntity petlogEntity = convertToPetlogEntity(petLogDetailLogDto.getPetlog());
         PetlogEntity savedPetlog = petlogJpaRepository.save(petlogEntity);
         DetaillogEntity detailLogEntity = null;
-
+        
         // 반려동물 로그의 타입이 "HOSPITAL"이 아닌 경우 상세 로그 생성
         if (!savedPetlog.getType().equals(Type.HOSPITAL)) {
-            detailLogEntity = convertToDetaillogEntity(dto.getDetailLog());
+            detailLogEntity = convertToDetaillogEntity(petLogDetailLogDto.getDetailLog());
             detailLogEntity.setLog_id(savedPetlog);
             detaillogJpaRepository.save(detailLogEntity);
         }
@@ -87,6 +102,26 @@ public class PetLogService {
                 .memo(detailLogEntity != null ? detailLogEntity.getMemo() : null)
                 .build();
     }
+
+    private PetlogEntity convertToPetlogEntity(PetLogDto petLogDto) {
+        return PetlogEntity.builder()
+                .pet_id(PetEntity.builder().id(petLogDto.getPetId()).build())      
+                .user_id(UserEntity.builder().id(petLogDto.getUserId()).build())
+                .type(petLogDto.getType())
+                .build();
+    }
+
+    private DetaillogEntity convertToDetaillogEntity(DetailLogDto detailLogDto) {
+        return DetaillogEntity.builder()
+                .log_time(detailLogDto.getLogTime())
+                .meal_type(detailLogDto.getMealtype())
+                .place(detailLogDto.getPlace())
+                .price(detailLogDto.getPrice())
+                .take_time(detailLogDto.getTakeTime())
+                .memo(detailLogDto.getMemo())
+                .build();
+    }
+
 
     /**
      * 새로운 반려동물 건강 로그를 생성하고, 필요 시 관련된 건강 로그를 생성합니다.
@@ -115,44 +150,11 @@ public class PetLogService {
         .type(petlogEntity.getType())
         .logId(healthlogEntity != null ? healthlogEntity.getLog_id().getId() : null)
         .logTime(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
-        .vaccination(healthlogEntity != null ? healthlogEntity.getVaccination() : null)
-        .vaccinatonLog(healthlogEntity != null ? healthlogEntity.getVaccination_log() : null)
-        .hospital(healthlogEntity != null ? healthlogEntity.getHospital() : null)
-        .healthLogTime(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
         .build();
     }
 
 
-    /**
-     * PetLogDto를 PetlogEntity로 변환합니다.
-     *
-     * @param petLogDto 변환할 PetLogDto 객체
-     * @return 변환된 PetlogEntity 객체
-     */
-    private PetlogEntity convertToPetlogEntity(PetLogDto petLogDto) {
-        return PetlogEntity.builder()
-                .pet_id(PetEntity.builder().id(petLogDto.getPetId()).build())      
-                .user_id(UserEntity.builder().id(petLogDto.getUserId()).build())
-                .type(petLogDto.getType())
-                .build();
-    }
-
-    /**
-     * DetailLogDto를 DetaillogEntity로 변환합니다.
-     *
-     * @param detailLogDto 변환할 DetailLogDto 객체
-     * @return 변환된 DetaillogEntity 객체
-     */
-    private DetaillogEntity convertToDetaillogEntity(DetailLogDto detailLogDto) {
-        return DetaillogEntity.builder()
-                .log_time(detailLogDto.getLogTime())
-                .meal_type(detailLogDto.getMealtype())
-                .place(detailLogDto.getPlace())
-                .price(detailLogDto.getPrice())
-                .take_time(detailLogDto.getTakeTime())
-                .memo(detailLogDto.getMemo())
-                .build();
-    }
+    
 
     /**
      * HealthLogDto를 HealthlogEntity로 변환합니다.
