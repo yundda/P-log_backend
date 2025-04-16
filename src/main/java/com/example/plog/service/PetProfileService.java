@@ -20,7 +20,6 @@ import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.web.dto.pet.PetCreateDto;
-import com.example.plog.web.dto.pet.PetNameDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.pet.PetUpdateDto;
@@ -91,10 +90,10 @@ public class PetProfileService{
         return petList;
     }
     
-    public PetResponseDto getPetProfileByUser(UserPrincipal userPrincipal, PetNameDto name) {
+    public PetResponseDto getPetProfileByUser(UserPrincipal userPrincipal, String name) {
         // 데이터베이스에서 반려동물 엔티티 조회
-        PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), name.getName())
-            .orElseThrow(() -> new EntityNotFoundException("Pet not found with id: " + userPrincipal.getId() + name.getName()));
+        PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), name)
+            .orElseThrow(() -> new EntityNotFoundException("Pet not found with id: " + userPrincipal.getId() + name));
 
         // PetResponseDto 생성 및 반환
         return PetResponseDto.builder()
@@ -154,9 +153,9 @@ public class PetProfileService{
 
     // 반려동물 정보를 삭제하는 메서드
     @Transactional
-    public void deletePet(UserPrincipal userPrincipal, PetNameDto name) {
+    public void deletePet(UserPrincipal userPrincipal, String name) {
         // 주어진 petId가 데이터베이스에 존재하지 않으면 예외 발생
-        Optional<PetEntity> optionalPetEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), name.getName());
+        Optional<PetEntity> optionalPetEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), name);
         if (optionalPetEntity.isEmpty()) {
             throw new DatabaseException("해당 데이터가 존재하지 않습니다.");
         }
