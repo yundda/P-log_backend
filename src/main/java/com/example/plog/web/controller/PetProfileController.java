@@ -22,6 +22,7 @@ import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetNameDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
+import com.example.plog.web.dto.pet.PetUpdateDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,15 +65,16 @@ public class PetProfileController {
       @PatchMapping("/update")
       public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @PathVariable Long id,
-              @RequestBody PetProfileDto petProfileDto) {
-        PetResponseDto response = petProfileService.updatePet(userPrincipal, id, petProfileDto);
+              @RequestBody PetUpdateDto petUpdateDto) {
+        PetResponseDto response = petProfileService.updatePet(userPrincipal, petUpdateDto);
         return ApiResponse.success(response);
       }
  
       @DeleteMapping("/delete")
-      public ResponseEntity<ApiResponse<Void>> deletePet(@PathVariable("id") Long petId){
-          petProfileService.deletePet(petId);
+      public ResponseEntity<ApiResponse<Void>> deletePet(
+        @CurrentUser UserPrincipal userPrincipal,
+        @RequestBody PetNameDto name){
+          petProfileService.deletePet(userPrincipal, name);
           return ApiResponse.success();
       }
 
