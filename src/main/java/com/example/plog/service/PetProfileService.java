@@ -19,6 +19,7 @@ import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.web.dto.PetProfileDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
+import com.example.plog.web.dto.pet.PetNameDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.user.UserRegistrationDto;
@@ -61,7 +62,6 @@ public class PetProfileService{
 
         // PetResponseDto 생성 및 반환
         return PetResponseDto.builder()
-            .petId(petEntity.getId())
             .petName(petEntity.getPetName())
             .petSpecies(petEntity.getPetSpecies())
             .petBreed(petEntity.getPetBreed())
@@ -89,14 +89,13 @@ public class PetProfileService{
         return petList;
     }
     
-    public PetResponseDto getPetById(Long petId) {
+    public PetResponseDto getPetProfileByUser(UserPrincipal userPrincipal, PetNameDto name) {
         // 데이터베이스에서 반려동물 엔티티 조회
-        PetEntity petEntity = petJpaRepository.findById(petId)
-            .orElseThrow(() -> new EntityNotFoundException("Pet not found with id: " + petId));
+        PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), name.getName())
+            .orElseThrow(() -> new EntityNotFoundException("Pet not found with id: " + userPrincipal.getId() + name.getName()));
 
         // PetResponseDto 생성 및 반환
         return PetResponseDto.builder()
-            .petId(petEntity.getId())
             .petName(petEntity.getPetName())
             .petSpecies(petEntity.getPetSpecies())
             .petBreed(petEntity.getPetBreed())
