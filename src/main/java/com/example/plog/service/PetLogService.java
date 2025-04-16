@@ -103,7 +103,7 @@ public class PetLogService {
     private DetaillogEntity convertToDetaillogEntity(DetailLogDto detailLogDto) {
         return DetaillogEntity.builder()
                 .log_time(detailLogDto.getLogTime())
-                .meal_type(detailLogDto.getMealtype())
+                .meal_type(detailLogDto.getMealType())
                 .place(detailLogDto.getPlace())
                 .price(detailLogDto.getPrice())
                 .take_time(detailLogDto.getTakeTime())

@@ -4,6 +4,7 @@ import java.time.LocalTime;
 
 import com.example.plog.repository.Enum.Mealtype;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,8 @@ import lombok.Setter;
 public class DetailLogDto {
     @Builder.Default
     private LocalTime logTime = LocalTime.now();
-    private Mealtype mealtype;
+    @JsonProperty("meal_type")
+    private Mealtype mealType;
     private String place;
     private Integer price;
     private Integer takeTime;
