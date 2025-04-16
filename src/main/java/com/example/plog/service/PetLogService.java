@@ -23,27 +23,11 @@ import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
 import com.example.plog.web.dto.healthlog.HealthLogDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
+import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * 반려동물 로그와 관련된 상세 로그를 관리하는 서비스 클래스입니다.
- * 이 클래스는 데이터베이스에 반려동물 로그와 상세 로그를 생성하고 저장하는 메서드를 제공합니다.
- * 
- * 의존성:
- * - PetlogJpaRepository: PetlogEntity를 관리하는 리포지토리.
- * - DetaillogJpaRepository: DetaillogEntity를 관리하는 리포지토리.
- * 
- * 메서드:
- * - createDetailLog(PetLogDetailLogDto dto): 새로운 반려동물 로그를 생성하고,
- *   필요 시 관련된 상세 로그를 생성합니다. 저장된 데이터를 포함하는 PetLogDto를 반환합니다.
- * - convertToPetlogEntity(PetLogDto petLogDto): PetLogDto를 PetlogEntity로 변환합니다.
- * - convertToDetaillogEntity(DetailLogDto detailLogDto): DetailLogDto를 DetaillogEntity로 변환합니다.
- * 
- * 참고:
- * - 반려동물 로그의 타입이 "HOSPITAL"이 아닌 경우, 상세 로그도 생성 및 저장됩니다.
- * - 반환되는 PetLogDto는 반려동물 로그와 (해당되는 경우) 상세 로그의 정보를 포함합니다.
- */
+
 @Service
 @RequiredArgsConstructor
 public class PetLogService {
@@ -64,6 +48,7 @@ public class PetLogService {
     PetJpaRepository petJpaRepository;
 
     
+    // DetailLog 생성 메서드
     public PetLogDto createDetailLog(PetLogDetailLogDto petLogDetailLogDto) {
         String petName = petLogDetailLogDto.getPetlog().getName();
         PetEntity petEntity = petJpaRepository.findByPetName(petName)
@@ -81,14 +66,14 @@ public class PetLogService {
         PetlogEntity savedPetlog = petlogJpaRepository.save(petlogEntity);
         DetaillogEntity detailLogEntity = null;
         
-        // 반려동물 로그의 타입이 "HOSPITAL"이 아닌 경우 상세 로그 생성
+        // PetLog의 타입이 "HOSPITAL"이 아닌 경우 상세 로그 생성
         if (!savedPetlog.getType().equals(Type.HOSPITAL)) {
             detailLogEntity = convertToDetaillogEntity(petLogDetailLogDto.getDetailLog());
             detailLogEntity.setLog_id(savedPetlog);
             detaillogJpaRepository.save(detailLogEntity);
         }
 
-        // 생성된 반려동물 로그와 상세 로그 정보를 PetLogDto로 반환
+        // 생성된 PetLog와 DetailLog 정보를 PetLogDto로 반환
         return PetLogDto.builder()
                 .petId(petlogEntity.getPet_id().getId())
                 .userId(petlogEntity.getUser_id().getId())
@@ -103,6 +88,7 @@ public class PetLogService {
                 .build();
     }
 
+    // PetLogDto를 PetlogEntity로 변환하는 메서드
     private PetlogEntity convertToPetlogEntity(PetLogDto petLogDto) {
         return PetlogEntity.builder()
                 .pet_id(PetEntity.builder().id(petLogDto.getPetId()).build())      
@@ -111,6 +97,7 @@ public class PetLogService {
                 .build();
     }
 
+    // DetailLogDto를 DetaillogEntity로 변환하는 메서드
     private DetaillogEntity convertToDetaillogEntity(DetailLogDto detailLogDto) {
         return DetaillogEntity.builder()
                 .log_time(detailLogDto.getLogTime())
@@ -122,28 +109,33 @@ public class PetLogService {
                 .build();
     }
 
+    // HealthLog 생성 메서드
+    public PetLogDto createHealthLog(PetLogHealthLogDto petLogHealthLogDto) {
+        String petName = petLogHealthLogDto.getPetlog().getName();
+        PetEntity petEntity = petJpaRepository.findByPetName(petName)
+                                .orElseThrow(() -> new RuntimeException("해당 이름의 반려동물을 찾을 수 없습니다. name: " + petName));
 
-    /**
-     * 새로운 반려동물 건강 로그를 생성하고, 필요 시 관련된 건강 로그를 생성합니다.
-     * 저장된 데이터를 포함하는 PetLogDto를 반환합니다.
-     *
-     * @param dto 반려동물 로그와 건강 로그 정보를 포함하는 DTO
-     * @return 생성된 반려동물 로그와 건강 로그 정보를 포함하는 PetLogDto
-     */
-    public PetLogDto createHealthLog(PetLogHealthLogDto dto) {
+        FamilyEntity familyEntity = familyJpaRepository.findById(petEntity.getId())
+                                .orElseThrow(() -> new RuntimeException("해당 ID의 FamilyEntity를 찾을 수 없습니다. ID: " + petEntity.getId()));
+
+        Long userId = familyEntity.getUser().getId();
+
+        petLogHealthLogDto.getPetlog().setPetId(petEntity.getId());
+        petLogHealthLogDto.getPetlog().setUserId(userId);
+
         // PetLogDto를 PetlogEntity로 변환 후 저장
-        PetlogEntity petlogEntity = convertToPetlogEntity(dto.getPetlog());
+        PetlogEntity petlogEntity = convertToPetlogEntity(petLogHealthLogDto.getPetlog());
         PetlogEntity savedPetlog = petlogJpaRepository.save(petlogEntity);
         HealthlogEntity healthlogEntity = null;
 
-        // 반려동물 로그의 타입이 "HOSPITAL"인 경우 건강 로그 생성
+        // PetLog의 타입이 "HOSPITAL"인 경우 건강 로그 생성
         if (savedPetlog.getType().equals(Type.HOSPITAL)) {
-            healthlogEntity = convertToHealthLogEntity(dto.getHealthLog());
+            healthlogEntity = convertToHealthLogEntity(petLogHealthLogDto.getHealthLog());
             healthlogEntity.setLog_id(savedPetlog);
             healthlogJpaRepository.save(healthlogEntity);
         }
 
-        // 생성된 반려동물 로그와 건강 로그 정보를 PetLogDto로 반환
+        // 생성된 PetLog와 HealthLog 정보를 PetLogDto로 반환
         return PetLogDto.builder()
         .petId(petlogEntity.getPet_id().getId())
         .userId(petlogEntity.getUser_id().getId())
@@ -153,15 +145,16 @@ public class PetLogService {
         .build();
     }
 
+    // PetLogDtoForHealth를 PetlogEntity로 변환하는 메서드
+    private PetlogEntity convertToPetlogEntity(PetLogDtoForHealth petLogDtoForHealth) {
+        return PetlogEntity.builder()
+                .pet_id(PetEntity.builder().id(petLogDtoForHealth.getPetId()).build())      
+                .user_id(UserEntity.builder().id(petLogDtoForHealth.getUserId()).build())
+                .type(petLogDtoForHealth.getType())
+                .build();
+    }
 
-    
-
-    /**
-     * HealthLogDto를 HealthlogEntity로 변환합니다.
-     *
-     * @param healthLogDto 변환할 HealthLogDto 객체
-     * @return 변환된 HealthlogEntity 객체
-     */
+    // HealthLogDto를 HealthlogEntity로 변환하는 메서드
     private HealthlogEntity convertToHealthLogEntity(HealthLogDto healthLogDto) {
         return HealthlogEntity.builder()
                 .vaccination(healthLogDto.getVaccination()) 
@@ -171,6 +164,7 @@ public class PetLogService {
                 .build();
     }
     
+    // 상세 로그 조회 메서드
     public List<DetailLogDto> getDetailLog(Long petId){
         List<DetaillogEntity> detaillogEntities = detaillogJpaRepository.findAllByPetId(petId);
 
@@ -179,6 +173,7 @@ public class PetLogService {
                 .collect(Collectors.toList());
     }
 
+    // DetaillogEntity를 DetailLogDto로 변환하는 메서드
     public DetailLogDto convertToDetailLogDto(DetaillogEntity entity){
         if(entity == null) return null;
         return DetailLogDto.builder()

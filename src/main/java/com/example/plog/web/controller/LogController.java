@@ -38,7 +38,7 @@ public class LogController {
         return ApiResponse.success(response);
     }
 
-    @PostMapping("api/logs/hospital")
+    @PostMapping("/health")
     public ResponseEntity<ApiResponse<PetLogDto>> createHealthLog(
         @RequestBody PetLogHealthLogDto petLogHealthLogDto,
         @CurrentUser UserPrincipal userPrincipal
