@@ -22,6 +22,7 @@ import com.example.plog.web.dto.detaillog.DetailLogDto;
 import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
 import com.example.plog.web.dto.healthlog.HealthLogDto;
+import com.example.plog.web.dto.healthlog.HealthLogResponseDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
 import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
@@ -176,7 +177,6 @@ public class PetLogService {
 
             Long petId = petEntity.getId();
             List<DetaillogEntity> detailLogs = detaillogJpaRepository.findAllByPetId(petId);
-
             if (detailLogs.isEmpty()) {
                 throw new RuntimeException("No detail logs found with petId: " + petId);
             }
@@ -191,7 +191,30 @@ public class PetLogService {
                 .take_time(detailLog.getTake_time())
                 .memo(detailLog.getMemo())
                 .build()
-        ).toList();
+            ).toList();
     }
 
+    public List<HealthLogResponseDto> getHealthLog(
+        UserPrincipal userPrincipal,
+        String petName
+    ){
+            PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), petName)
+                .orElseThrow(() -> new RuntimeException("Pet not found with userId: " 
+                                                      + userPrincipal.getId() 
+                                                      + " & petName: " + petName));
+
+            Long petId = petEntity.getId();
+            List<HealthlogEntity> healthLogs = healthlogJpaRepository.findAllByPetId(petId);
+            if (healthLogs.isEmpty()) {
+                throw new RuntimeException("No detail logs found with petId: " + petId);
+            }
+
+            return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
+                .vaccination(healthLog.getVaccination())
+                .vaccination_log(healthLog.getVaccination_log())
+                .hospital(healthLog.getHospital())
+                .hospital_log(healthLog.getHospital_log())
+                .build()
+            ).toList();
+    }
 }

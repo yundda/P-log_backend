@@ -21,6 +21,7 @@ import com.example.plog.web.dto.ApiResponse;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
 import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
+import com.example.plog.web.dto.healthlog.HealthLogResponseDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.petlog.PetLogResponseDto;
@@ -60,11 +61,12 @@ public class LogController {
         
     }
 
-    // @GetMapping("/haalth/{petName}")
-    // public ResponseEntity<ApiResponse<Map<String, Object>>> getHealthLogs(
-    //     @PathVariable Long petId,
-    //     @CurrentUser UserPrincipal userPrincipal
-    // ){
-    //     return
-    // }
+    @GetMapping("/health/{petName}")
+    public ResponseEntity<ApiResponse<List<HealthLogResponseDto>>> getHealthLogs(
+        @PathVariable String petName,
+        @CurrentUser UserPrincipal userPrincipal
+    ) {
+        List<HealthLogResponseDto> response = petLogService.getHealthLog(userPrincipal, petName);
+        return ApiResponse.success(response);
+    }
 }
