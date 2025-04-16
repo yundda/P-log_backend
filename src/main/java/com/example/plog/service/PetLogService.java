@@ -194,33 +194,4 @@ public class PetLogService {
         ).toList();
     }
 
-    // DetaillogEntity를 DetailLogDto로 변환하는 메서드
-    public DetailLogDto convertToDetailLogDto(DetaillogEntity entity){
-        if(entity == null) return null;
-        return DetailLogDto.builder()
-                .logTime(entity.getLog_time())
-                .mealtype(entity.getMeal_type())
-                .place(entity.getPlace())
-                .takeTime(entity.getTake_time())
-                .memo(entity.getMemo())
-                .build();
-    }
-
-    // private List<HealthLogDto> getHealthLog(Long petId){
-    //     List<HealthlogEntity> healthlogEntities = healthlogJpaRepository.findAllByPetId(petId);
-
-    //     return healthlogEntities.stream()
-    //             .map(this::convertToHealthLogDto)
-    //             .collect(Collectors.toList());
-    // }
-
-    private HealthLogDto convertHealthLogDto(HealthlogEntity entity){
-        if(entity == null) return null;
-        return HealthLogDto.builder()
-        .vaccination(entity.getVaccination())
-        .vaccinationLog(entity.getVaccination_log())
-        .hospital(entity.getHospital())
-        .hospitalLog(entity.getHospital_log())
-                .build();
-    }
 }
