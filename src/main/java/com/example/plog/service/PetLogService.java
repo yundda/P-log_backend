@@ -185,7 +185,7 @@ public class PetLogService {
             return detailLogs.stream().map(detailLog -> DetailLogResponseDto.builder()
                 .log_id(detailLog.getLog_id().getId())      
                 .log_time(detailLog.getLog_time())
-                .mealtype(detailLog.getMeal_type())         
+                .mealType(detailLog.getMeal_type())         
                 .place(detailLog.getPlace())
                 .price(detailLog.getPrice())
                 .take_time(detailLog.getTake_time())

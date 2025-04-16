@@ -3,6 +3,7 @@ package com.example.plog.web.dto.healthlog;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HealthLogResponseDto {
     private String vaccination;
+    @JsonProperty("vaccination_log")
     private Boolean vaccination_log;
     private String hospital;
     private LocalTime hospital_log;

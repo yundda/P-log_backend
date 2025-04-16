@@ -20,7 +20,7 @@ import lombok.Setter;
 public class DetailLogResponseDto {
     private Long log_id;
     private LocalTime log_time;
-    private Mealtype mealtype;
+    private Mealtype mealType;
     private String place;
     private Integer price;
     private Integer take_time;
