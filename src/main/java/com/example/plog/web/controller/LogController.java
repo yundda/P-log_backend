@@ -1,6 +1,6 @@
 package com.example.plog.web.controller;
 
-import java.nio.file.attribute.UserPrincipal;
+import com.example.plog.security.UserPrincipal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +19,11 @@ import com.example.plog.config.security.CurrentUser;
 import com.example.plog.service.PetLogService;
 import com.example.plog.web.dto.ApiResponse;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
+import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
+import com.example.plog.web.dto.pet.PetResponseDto;
+import com.example.plog.web.dto.petlog.PetLogResponseDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
 
 @RestController
@@ -47,25 +50,17 @@ public class LogController {
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/{petId}")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getDetailLogs(
-        @PathVariable Long petId,
-        @CurrentUser UserPrincipal userPrincipal
+    @GetMapping("/{petName}")
+    public ResponseEntity<ApiResponse<List<DetailLogResponseDto>>> getDetailLogs(
+        @CurrentUser UserPrincipal userPrincipal,
+        @PathVariable String petName
     ){
-        List<DetailLogDto> detailLogs = petLogService.getDetailLog(petId);
-        
-        if(detailLogs.isEmpty()){
-            return ApiResponse.error("NOT_FOUND", "해당 petId의 로그가 없습니다.", HttpStatus.NOT_FOUND);
-        }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("detailLogs", detailLogs);
-
-        return ApiResponse.success(data);
+        List<DetailLogResponseDto> response = petLogService.getDetailLog(userPrincipal, petName);
+        return ApiResponse.success(response);
         
     }
 
-    // @GetMapping("/haalth/{petId}")
+    // @GetMapping("/haalth/{petName}")
     // public ResponseEntity<ApiResponse<Map<String, Object>>> getHealthLogs(
     //     @PathVariable Long petId,
     //     @CurrentUser UserPrincipal userPrincipal

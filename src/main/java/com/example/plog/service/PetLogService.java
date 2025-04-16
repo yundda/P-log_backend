@@ -1,7 +1,6 @@
 package com.example.plog.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,9 @@ import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.repository.petlog.PetlogEntity;
 import com.example.plog.repository.petlog.PetlogJpaRepository;
 import com.example.plog.repository.user.UserEntity;
+import com.example.plog.security.UserPrincipal;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
+import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
 import com.example.plog.web.dto.healthlog.HealthLogDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
@@ -165,12 +166,32 @@ public class PetLogService {
     }
     
     // 상세 로그 조회 메서드
-    public List<DetailLogDto> getDetailLog(Long petId){
-        List<DetaillogEntity> detaillogEntities = detaillogJpaRepository.findAllByPetId(petId);
+    public List<DetailLogResponseDto> getDetailLog(
+        UserPrincipal userPrincipal,
+        String petName){
+            PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), petName)
+                .orElseThrow(() -> new RuntimeException("Pet not found with userId: " 
+                                                      + userPrincipal.getId() 
+                                                      + " & petName: " + petName));
 
-        return detaillogEntities.stream()
-                .map(this::convertToDetailLogDto)
-                .collect(Collectors.toList());
+            Long petId = petEntity.getId();
+            List<DetaillogEntity> detailLogs = detaillogJpaRepository.findAllByPetId(petId);
+
+            if (detailLogs.isEmpty()) {
+                throw new RuntimeException("No detail logs found with petId: " + petId);
+            }
+
+
+            return detailLogs.stream().map(detailLog -> DetailLogResponseDto.builder()
+                .log_id(detailLog.getLog_id().getId())      
+                .log_time(detailLog.getLog_time())
+                .mealtype(detailLog.getMeal_type())         
+                .place(detailLog.getPlace())
+                .price(detailLog.getPrice())
+                .take_time(detailLog.getTake_time())
+                .memo(detailLog.getMemo())
+                .build()
+        ).toList();
     }
 
     // DetaillogEntity를 DetailLogDto로 변환하는 메서드
