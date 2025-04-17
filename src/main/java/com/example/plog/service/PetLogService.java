@@ -1,5 +1,6 @@
 package com.example.plog.service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,15 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
 import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
+import com.example.plog.web.dto.detaillog.PetLogDetailLogPatchDto;
 import com.example.plog.web.dto.healthlog.HealthLogDto;
+import com.example.plog.web.dto.healthlog.HealthLogPatchDto;
 import com.example.plog.web.dto.healthlog.HealthLogResponseDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
 import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 
@@ -217,4 +221,73 @@ public class PetLogService {
                 .build()
             ).toList();
     }
+
+    @Transactional
+    public void patchDetailLogs(
+        UserPrincipal userPrincipal,
+        PetLogDetailLogPatchDto petLogDetailLogPatchDto
+    ){
+        String    petName    = petLogDetailLogPatchDto.getPetName();
+        Long      userId     = userPrincipal.getId();
+        Type      oldType    = petLogDetailLogPatchDto.getOldType();
+        LocalTime oldLogTime = petLogDetailLogPatchDto.getOldLogTime();
+
+        DetaillogEntity detail = detaillogJpaRepository
+            .findByPetNameAndUserIdAndTypeAndLogTime(petName, userId, oldType, oldLogTime)
+            .orElseThrow(() -> new RuntimeException(
+                String.format("로그를 찾을 수 없습니다 (petName=%s, userId=%d, type=%s, logTime=%s)",
+                              petName, userId, oldType, oldLogTime)));
+
+        Type newType = petLogDetailLogPatchDto.getNewType();
+        if (newType != null && newType != oldType) {
+            PetlogEntity petlog = detail.getLog_id();
+            petlog.setType(newType);
+            petlogJpaRepository.save(petlog);
+        }
+
+        if (petLogDetailLogPatchDto.getNewLogTime() != null) detail.setLog_time(petLogDetailLogPatchDto.getNewLogTime());
+        if (petLogDetailLogPatchDto.getMealType()   != null) detail.setMeal_type(petLogDetailLogPatchDto.getMealType());
+        if (petLogDetailLogPatchDto.getPlace()      != null) detail.setPlace(petLogDetailLogPatchDto.getPlace());
+        if (petLogDetailLogPatchDto.getPrice()      != null) detail.setPrice(petLogDetailLogPatchDto.getPrice());
+        if (petLogDetailLogPatchDto.getTakeTime()   != null) detail.setTake_time(petLogDetailLogPatchDto.getTakeTime());
+        if (petLogDetailLogPatchDto.getMemo()       != null) detail.setMemo(petLogDetailLogPatchDto.getMemo());
+        
+        detaillogJpaRepository.save(detail);
+    }
+
+    @Transactional
+    public void patchHealthLogs(
+        UserPrincipal userPrincipal,
+        HealthLogPatchDto dto
+        ){
+            PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), dto.getPetName())
+            .orElseThrow(() -> new RuntimeException(
+                "Pet not found: " + dto.getPetName()));
+
+            HealthlogEntity healthlog = healthlogJpaRepository
+            .findByPetIdAndHospitalLog(pet.getId(), dto.getOldhospitalLog())
+            .orElseThrow(() -> new RuntimeException(
+                "HealthLog not found for pet=" + dto.getPetName()
+                + " at time=" + dto.getOldhospitalLog()));
+
+            boolean hasVaccine = dto.getVaccination()    != null
+                              || dto.getVaccinationLog() != null;
+
+             if (hasVaccine) {
+            // — 예방접종 정보 우선 반영
+            if (dto.getVaccination()    != null) healthlog.setVaccination(dto.getVaccination());
+            if (dto.getVaccinationLog() != null) healthlog.setVaccination_log(dto.getVaccinationLog());
+            // — 그 외 필드도 null 체크 후 반영
+            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
+            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
+             }
+            else {
+            // 예방접종 정보 없으면, 병원 방문 정보만
+            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
+            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
+        }
+
+            healthlogJpaRepository.save(healthlog);
+        }
 }
