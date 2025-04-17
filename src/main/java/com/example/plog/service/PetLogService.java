@@ -1,5 +1,6 @@
 package com.example.plog.service;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -230,7 +231,7 @@ public class PetLogService {
         String    petName    = petLogDetailLogPatchDto.getPetName();
         Long      userId     = userPrincipal.getId();
         Type      oldType    = petLogDetailLogPatchDto.getOldType();
-        LocalTime oldLogTime = petLogDetailLogPatchDto.getOldLogTime();
+        LocalDateTime oldLogTime = petLogDetailLogPatchDto.getOldLogTime();
 
         DetaillogEntity detail = detaillogJpaRepository
             .findByPetNameAndUserIdAndTypeAndLogTime(petName, userId, oldType, oldLogTime)

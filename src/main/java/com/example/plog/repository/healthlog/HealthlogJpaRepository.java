@@ -1,6 +1,7 @@
 package com.example.plog.repository.healthlog;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public interface HealthlogJpaRepository extends JpaRepository<HealthlogEntity,Lo
     "   AND h.hospital_log   = :oldHospitalLog")
     Optional<HealthlogEntity> findByPetIdAndHospitalLog(
     @Param("petId") Long petId,
-    @Param("oldHospitalLog") LocalDate oldHospitalLog);
+    @Param("oldHospitalLog") LocalDateTime oldHospitalLog);
 
     @Modifying
     @Transactional

@@ -1,5 +1,6 @@
 package com.example.plog.repository.detaillog;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public interface DetaillogJpaRepository extends JpaRepository<DetaillogEntity,Lo
         @Param("petName") String    petName,
         @Param("userId")   Long      userId,
         @Param("type")     Type      type,
-        @Param("logTime")  LocalTime logTime
+        @Param("logTime")  LocalDateTime logTime
     );
 
     @Modifying
