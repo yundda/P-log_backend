@@ -1,6 +1,6 @@
 package com.example.plog.web.dto.detaillog;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import com.example.plog.repository.Enum.Mealtype;
 import com.example.plog.repository.Enum.Type;
@@ -20,10 +20,10 @@ public class PetLogDetailLogPatchDto {
     private DetailLogDto detailLog;
     private String      petName;
     private Type        oldType;
-    private LocalTime   oldLogTime;
+    private LocalDateTime   oldLogTime;
 
     private Type        newType;
-    private LocalTime   newLogTime;
+    private LocalDateTime   newLogTime;
     private Mealtype    mealType;
     private String      place;
     private Integer     price;

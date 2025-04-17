@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.plog.repository.Enum.Type;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface DetaillogJpaRepository extends JpaRepository<DetaillogEntity,Long>{
@@ -27,4 +30,14 @@ public interface DetaillogJpaRepository extends JpaRepository<DetaillogEntity,Lo
         @Param("type")     Type      type,
         @Param("logTime")  LocalTime logTime
     );
+
+    @Modifying
+    @Transactional
+    @Query(
+      "DELETE FROM DetaillogEntity d " +
+      " WHERE d.log_id.id IN (" +
+      "   SELECT pl.id FROM PetlogEntity pl WHERE pl.pet_id.id = :petId" +
+      ")"
+    )
+    void deleteAllByPetId(@Param("petId") Long petId);
 }

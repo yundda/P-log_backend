@@ -1,6 +1,6 @@
 package com.example.plog.web.dto.healthlog;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +18,6 @@ public class HealthLogPatchDto {
     private String vaccination;
     private Boolean vaccinationLog;
     private String hospital;
-    private LocalTime hospitalLog;
-    private LocalTime oldhospitalLog;
+    private LocalDateTime hospitalLog;
+    private LocalDateTime oldHospitalLog;
 }

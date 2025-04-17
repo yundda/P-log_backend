@@ -1,6 +1,6 @@
 package com.example.plog.web.dto.detaillog;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import com.example.plog.repository.Enum.Mealtype;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,8 +18,7 @@ import lombok.Setter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DetailLogDto {
-    @Builder.Default
-    private LocalTime logTime = LocalTime.now();
+    private LocalDateTime logTime;
     private Mealtype mealType;
     private String place;
     private Integer price;

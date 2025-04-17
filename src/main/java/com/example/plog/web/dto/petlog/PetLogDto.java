@@ -1,5 +1,6 @@
 package com.example.plog.web.dto.petlog;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.example.plog.repository.Enum.Mealtype;
@@ -25,6 +26,7 @@ public class PetLogDto {
     private Type type;
     private Long logId;
     private LocalTime logTime;
+    private LocalDate logDate;
     private Mealtype mealType;
     private String place;
     private Integer price;

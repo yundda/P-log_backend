@@ -1,5 +1,6 @@
 package com.example.plog.repository.detaillog;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.example.plog.repository.BaseEntity;
@@ -45,7 +46,7 @@ public class DetaillogEntity extends BaseEntity {
     private PetlogEntity log_id;
 
     @Column(name = "log_time", nullable = false)
-    private LocalTime log_time;
+    private LocalDateTime log_time;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "meal_type")

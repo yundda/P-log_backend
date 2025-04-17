@@ -147,7 +147,7 @@ public class PetLogService {
         .userId(petlogEntity.getUser_id().getId())
         .type(petlogEntity.getType())
         .logId(healthlogEntity != null ? healthlogEntity.getLog_id().getId() : null)
-        .logTime(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
+        .logDate(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
         .build();
     }
 
@@ -265,11 +265,11 @@ public class PetLogService {
             .orElseThrow(() -> new RuntimeException(
                 "Pet not found: " + dto.getPetName()));
 
-            HealthlogEntity healthlog = healthlogJpaRepository
-            .findByPetIdAndHospitalLog(pet.getId(), dto.getOldhospitalLog())
-            .orElseThrow(() -> new RuntimeException(
-                "HealthLog not found for pet=" + dto.getPetName()
-                + " at time=" + dto.getOldhospitalLog()));
+                HealthlogEntity healthlog = healthlogJpaRepository
+                .findByPetIdAndHospitalLog(pet.getId(), dto.getOldHospitalLog())
+                .orElseThrow(() -> new RuntimeException(
+                    "HealthLog not found for pet=" + dto.getPetName()
+                  + " at date=" + dto.getOldHospitalLog()));
 
             boolean hasVaccine = dto.getVaccination()    != null
                               || dto.getVaccinationLog() != null;
@@ -290,4 +290,20 @@ public class PetLogService {
 
             healthlogJpaRepository.save(healthlog);
         }
-}
+    @Transactional
+    public void deleteDetailLogs(UserPrincipal userPrincipal, String petName) {
+        PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), petName)
+            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+        detaillogJpaRepository.deleteAllByPetId(pet.getId());
+    }
+
+    @Transactional
+    public void deleteHealthLogs(UserPrincipal userPrincipal, String petName) {
+        PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), petName)
+            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+        healthlogJpaRepository.deleteAllByPetId(pet.getId());
+    }        
+        
+    }
