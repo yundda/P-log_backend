@@ -16,7 +16,6 @@ import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
-import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.service.resolver.EntityFinder;
 import com.example.plog.web.dto.pet.PetCreateDto;

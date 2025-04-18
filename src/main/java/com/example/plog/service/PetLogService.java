@@ -1,6 +1,5 @@
 package com.example.plog.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import com.example.plog.repository.petlog.PetlogEntity;
 import com.example.plog.repository.petlog.PetlogJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.security.UserPrincipal;
+import com.example.plog.service.exceptions.AuthorizationException;
+import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.resolver.EntityFinder;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
@@ -178,7 +179,7 @@ public class PetLogService {
             Long petId = petEntity.getId();
             List<DetaillogEntity> detailLogs = detaillogJpaRepository.findAllByPetId(petId);
             if (detailLogs.isEmpty()) {
-                throw new NotFoundException("No detail logs found with petId: " + petId);
+                throw new NotFoundException("요청한 데이터를 찾을 수 없습니다 : " + petId);
             }
 
 
@@ -203,7 +204,7 @@ public class PetLogService {
             Long petId = petEntity.getId();
             List<HealthlogEntity> healthLogs = healthlogJpaRepository.findAllByPetId(petId);
             if (healthLogs.isEmpty()) {
-                throw new NotFoundException("No detail logs found with petId: " + petId);
+                throw new NotFoundException("요청한 데이터를 찾을 수 없습니다 : " + petId);
             }
 
             return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
@@ -223,28 +224,35 @@ public class PetLogService {
         PetLogDetailLogPatchDto dto
     ){
         DetaillogEntity detail = detaillogJpaRepository.findById(dto.getLog_id())
-        .orElseThrow(() -> new RuntimeException("로그를 찾을 수 없습니다. logId=" + dto.getLog_id()));
+        .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + dto.getLog_id()));
 
         Long ownerId = detail.getLog_id().getUser_id().getId();
         if (!ownerId.equals(userPrincipal.getId())) {
-        throw new RuntimeException("접근 권한이 없습니다.");
+        throw new AuthorizationException("접근 권한이 없습니다.");
         }
 
-        if (dto.getNewType() != null
-        && dto.getNewType() != detail.getLog_id().getType()) {
-        PetlogEntity petlog = detail.getLog_id();
-        petlog.setType(dto.getNewType());
-        petlogJpaRepository.save(petlog);
+        if (dto.getNewType() != null && dto.getNewType() != detail.getLog_id().getType()) {
+            PetlogEntity petlog = detail.getLog_id();
+            petlog.setType(dto.getNewType());
+            try {
+                petlogJpaRepository.save(petlog);
+            } catch (Exception e) {
+                throw new DatabaseException("요청한 데이터를 찾을 수 없습니다 : " + e.getMessage());
+            }
         }
 
-        if (dto.getNewLogTime() != null)   detail.setLog_time(dto.getNewLogTime());
-        if (dto.getMealType()   != null)   detail.setMeal_type(dto.getMealType());
-        if (dto.getPlace()      != null)   detail.setPlace(dto.getPlace());
-        if (dto.getPrice()      != null)   detail.setPrice(dto.getPrice());
-        if (dto.getTakeTime()   != null)   detail.setTake_time(dto.getTakeTime());
-        if (dto.getMemo()       != null)   detail.setMemo(dto.getMemo());
-        
-        detaillogJpaRepository.save(detail);
+        try {
+            if (dto.getNewLogTime() != null) detail.setLog_time(dto.getNewLogTime());
+            if (dto.getMealType()   != null) detail.setMeal_type(dto.getMealType());
+            if (dto.getPlace()      != null) detail.setPlace(dto.getPlace());
+            if (dto.getPrice()      != null) detail.setPrice(dto.getPrice());
+            if (dto.getTakeTime()   != null) detail.setTake_time(dto.getTakeTime());
+            if (dto.getMemo()       != null) detail.setMemo(dto.getMemo());
+
+            detaillogJpaRepository.save(detail);
+        } catch (Exception e) {
+            throw new DatabaseException("DB를 수정하는 중 오류가 발생했습니다. : " + e.getMessage());
+        }
     }
 
     // HealthLog 수정
@@ -254,20 +262,24 @@ public class PetLogService {
         HealthLogPatchDto dto
         ){
             HealthlogEntity healthlog = healthlogJpaRepository.findById(dto.getLog_id())
-            .orElseThrow(() -> new RuntimeException("HealthLog not found: id=" + dto.getLog_id()));
+            .orElseThrow(() -> new NotFoundException("HealthLog not found: id=" + dto.getLog_id()));
 
             Long ownerId = healthlog.getLog_id()
             .getUser_id().getId(); 
             if (!ownerId.equals(userPrincipal.getId())) {
-            throw new RuntimeException("접근 권한이 없습니다.");
+            throw new AuthorizationException("접근 권한이 없습니다.");
 }
 
-            if (dto.getVaccination()    != null) healthlog.setVaccination(dto.getVaccination());
-            if (dto.getVaccinationLog() != null) healthlog.setVaccination_log(dto.getVaccinationLog());
-            if (dto.getHospital()       != null) healthlog.setHospital(dto.getHospital());
-            if (dto.getHospitalLog()    != null) healthlog.setHospital_log(dto.getHospitalLog());
+            try {
+                if (dto.getVaccination()    != null) healthlog.setVaccination(dto.getVaccination());
+                if (dto.getVaccinationLog() != null) healthlog.setVaccination_log(dto.getVaccinationLog());
+                if (dto.getHospital()       != null) healthlog.setHospital(dto.getHospital());
+                if (dto.getHospitalLog()    != null) healthlog.setHospital_log(dto.getHospitalLog());
 
-            healthlogJpaRepository.save(healthlog);
+                healthlogJpaRepository.save(healthlog);
+            } catch (Exception e) {
+                throw new DatabaseException("DB를 수정하는 중 오류가 발생했습니다. : " + e.getMessage());
+            }
         }
 
     // Detailog 삭제
@@ -275,16 +287,14 @@ public class PetLogService {
     public void deleteDetailLog(UserPrincipal user, Long logId) {
         // 1) ID로 조회
         DetaillogEntity detail = detaillogJpaRepository.findById(logId)
-            .orElseThrow(() -> new RuntimeException("DetailLog not found: id=" + logId));
+        .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + logId));
 
-        // 2) (선택) 소유자 검증
-        Long ownerId = detail.getLog_id()
-                             .getUser_id().getId();
-        if (!ownerId.equals(user.getId())) {
-            throw new RuntimeException("접근 권한이 없습니다.");
+        // 2) 삭제
+        try {
+            detaillogJpaRepository.delete(detail);
+        } catch (Exception e) {
+            throw new DatabaseException("DB를 삭제하는 중 오류가 발생했습니다 : " + e.getMessage());
         }
-        // 3) 삭제
-        detaillogJpaRepository.delete(detail);
     }
 
     // HealthLog 삭제
@@ -292,17 +302,14 @@ public class PetLogService {
     public void deleteHealthLog(UserPrincipal user, Long LogId) {
         // 1) ID로 조회
         HealthlogEntity health = healthlogJpaRepository.findById(LogId)
-            .orElseThrow(() -> new RuntimeException("HealthLog not found: id=" + LogId));
+        .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + LogId));
 
-        // 2) (선택) 소유자 검증
-        Long ownerId = health.getLog_id()
-                              .getUser_id().getId();
-        if (!ownerId.equals(user.getId())) {
-            throw new RuntimeException("접근 권한이 없습니다.");
+        // 2) 삭제
+        try {
+            healthlogJpaRepository.delete(health);
+        } catch (Exception e) {
+            throw new DatabaseException("DB를 삭제하는 중 오류가 발생했습니다 : " + e.getMessage());
         }
-
-        // 3) 삭제
-        healthlogJpaRepository.delete(health);
     }        
         
     }
