@@ -18,15 +18,13 @@ import lombok.Setter;
 @Builder
 public class PetLogDetailLogPatchDto {
     private DetailLogDto detailLog;
-    private String      petName;
-    private Type        oldType;
-    private LocalDateTime   oldLogTime;
-
-    private Type        newType;
-    private LocalDateTime   newLogTime;
-    private Mealtype    mealType;
-    private String      place;
-    private Integer     price;
-    private Integer     takeTime;
-    private String      memo;
+    private String petName;
+    private Long log_id;
+    private Type newType;
+    private LocalDateTime newLogTime;
+    private Mealtype mealType;
+    private String place;
+    private Integer price;
+    private Integer takeTime;
+    private String memo;
 }
