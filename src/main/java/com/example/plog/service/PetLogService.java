@@ -220,32 +220,29 @@ public class PetLogService {
     @Transactional
     public void patchDetailLogs(
         UserPrincipal userPrincipal,
-        PetLogDetailLogPatchDto petLogDetailLogPatchDto
+        PetLogDetailLogPatchDto dto
     ){
-        String    petName    = petLogDetailLogPatchDto.getPetName();
-        Long      userId     = userPrincipal.getId();
-        Type      oldType    = petLogDetailLogPatchDto.getOldType();
-        LocalDateTime oldLogTime = petLogDetailLogPatchDto.getOldLogTime();
+        DetaillogEntity detail = detaillogJpaRepository.findById(dto.getLog_id())
+        .orElseThrow(() -> new RuntimeException("로그를 찾을 수 없습니다. logId=" + dto.getLog_id()));
 
-        DetaillogEntity detail = detaillogJpaRepository
-            .findByPetNameAndUserIdAndTypeAndLogTime(petName, userId, oldType, oldLogTime)
-            .orElseThrow(() -> new NotFoundException(
-                String.format("로그를 찾을 수 없습니다 (petName=%s, userId=%d, type=%s, logTime=%s)",
-                              petName, userId, oldType, oldLogTime)));
-
-        Type newType = petLogDetailLogPatchDto.getNewType();
-        if (newType != null && newType != oldType) {
-            PetlogEntity petlog = detail.getLog_id();
-            petlog.setType(newType);
-            petlogJpaRepository.save(petlog);
+        Long ownerId = detail.getLog_id().getUser_id().getId();
+        if (!ownerId.equals(userPrincipal.getId())) {
+        throw new RuntimeException("접근 권한이 없습니다.");
         }
 
-        if (petLogDetailLogPatchDto.getNewLogTime() != null) detail.setLog_time(petLogDetailLogPatchDto.getNewLogTime());
-        if (petLogDetailLogPatchDto.getMealType()   != null) detail.setMeal_type(petLogDetailLogPatchDto.getMealType());
-        if (petLogDetailLogPatchDto.getPlace()      != null) detail.setPlace(petLogDetailLogPatchDto.getPlace());
-        if (petLogDetailLogPatchDto.getPrice()      != null) detail.setPrice(petLogDetailLogPatchDto.getPrice());
-        if (petLogDetailLogPatchDto.getTakeTime()   != null) detail.setTake_time(petLogDetailLogPatchDto.getTakeTime());
-        if (petLogDetailLogPatchDto.getMemo()       != null) detail.setMemo(petLogDetailLogPatchDto.getMemo());
+        if (dto.getNewType() != null
+        && dto.getNewType() != detail.getLog_id().getType()) {
+        PetlogEntity petlog = detail.getLog_id();
+        petlog.setType(dto.getNewType());
+        petlogJpaRepository.save(petlog);
+        }
+
+        if (dto.getNewLogTime() != null)   detail.setLog_time(dto.getNewLogTime());
+        if (dto.getMealType()   != null)   detail.setMeal_type(dto.getMealType());
+        if (dto.getPlace()      != null)   detail.setPlace(dto.getPlace());
+        if (dto.getPrice()      != null)   detail.setPrice(dto.getPrice());
+        if (dto.getTakeTime()   != null)   detail.setTake_time(dto.getTakeTime());
+        if (dto.getMemo()       != null)   detail.setMemo(dto.getMemo());
         
         detaillogJpaRepository.save(detail);
     }
@@ -256,56 +253,56 @@ public class PetLogService {
         UserPrincipal userPrincipal,
         HealthLogPatchDto dto
         ){
-            PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), dto.getPetName());
+            HealthlogEntity healthlog = healthlogJpaRepository.findById(dto.getLog_id())
+            .orElseThrow(() -> new RuntimeException("HealthLog not found: id=" + dto.getLog_id()));
 
-                HealthlogEntity healthlog = healthlogJpaRepository
-                .findByPetIdAndHospitalLog(pet.getId(), dto.getOldHospitalLog())
-                .orElseThrow(() -> new NotFoundException(
-                    "HealthLog not found for pet=" + dto.getPetName()
-                  + " at date=" + dto.getOldHospitalLog()));
+            Long ownerId = healthlog.getLog_id()
+            .getUser_id().getId(); 
+            if (!ownerId.equals(userPrincipal.getId())) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+}
 
-            boolean hasVaccine = dto.getVaccination()    != null
-                              || dto.getVaccinationLog() != null;
-
-             if (hasVaccine) {
-            // — 예방접종 정보 우선 반영
             if (dto.getVaccination()    != null) healthlog.setVaccination(dto.getVaccination());
             if (dto.getVaccinationLog() != null) healthlog.setVaccination_log(dto.getVaccinationLog());
-            // — 그 외 필드도 null 체크 후 반영
-            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
-            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
-             }
-            else {
-            // 예방접종 정보 없으면, 병원 방문 정보만
-            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
-            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
-        }
+            if (dto.getHospital()       != null) healthlog.setHospital(dto.getHospital());
+            if (dto.getHospitalLog()    != null) healthlog.setHospital_log(dto.getHospitalLog());
 
             healthlogJpaRepository.save(healthlog);
         }
 
     // Detailog 삭제
     @Transactional
-    public void deleteDetailLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
-        System.out.println(">>> deleteDetailLogs called: userId=" + userPrincipal.getId()
-        + ", petName=" + petName 
-        + ", logTime=" + logTime);
+    public void deleteDetailLog(UserPrincipal user, Long logId) {
+        // 1) ID로 조회
+        DetaillogEntity detail = detaillogJpaRepository.findById(logId)
+            .orElseThrow(() -> new RuntimeException("DetailLog not found: id=" + logId));
 
-        PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
-
-        System.out.println(">>> Found pet: id=" + pet.getId() + ", name=" + pet.getPetName());
-
-        System.out.println(">>> Before delete, total detail logs: " 
-                       + detaillogJpaRepository.findAllByPetId(pet.getId()).size());
-
-            detaillogJpaRepository.deleteByPetIdAndLogTime(pet.getId(), logTime);
+        // 2) (선택) 소유자 검증
+        Long ownerId = detail.getLog_id()
+                             .getUser_id().getId();
+        if (!ownerId.equals(user.getId())) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+        }
+        // 3) 삭제
+        detaillogJpaRepository.delete(detail);
     }
 
     // HealthLog 삭제
     @Transactional
-    public void deleteHealthLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
-        PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
-        healthlogJpaRepository.deleteByPetIdAndHospitalLog(pet.getId(), logTime);
+    public void deleteHealthLog(UserPrincipal user, Long LogId) {
+        // 1) ID로 조회
+        HealthlogEntity health = healthlogJpaRepository.findById(LogId)
+            .orElseThrow(() -> new RuntimeException("HealthLog not found: id=" + LogId));
+
+        // 2) (선택) 소유자 검증
+        Long ownerId = health.getLog_id()
+                              .getUser_id().getId();
+        if (!ownerId.equals(user.getId())) {
+            throw new RuntimeException("접근 권한이 없습니다.");
+        }
+
+        // 3) 삭제
+        healthlogJpaRepository.delete(health);
     }        
         
     }

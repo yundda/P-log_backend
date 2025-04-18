@@ -14,10 +14,9 @@ import lombok.Setter;
 @AllArgsConstructor 
 @Builder
 public class HealthLogPatchDto {
-    private String petName;
+    private Long log_id;
     private String vaccination;
     private Boolean vaccinationLog;
     private String hospital;
     private LocalDateTime hospitalLog;
-    private LocalDateTime oldHospitalLog;
 }
