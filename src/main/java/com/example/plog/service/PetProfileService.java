@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.plog.repository.Enum.Role;
 import com.example.plog.repository.family.FamilyEntity;
@@ -15,6 +16,7 @@ import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
+import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.service.resolver.EntityFinder;
 import com.example.plog.web.dto.pet.PetCreateDto;
@@ -40,13 +42,19 @@ public class PetProfileService{
 
     @Autowired
     EntityFinder entityFinder;
+
+    @Autowired
+    S3Service s3Service;
     
-    public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto) {
+    public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto, MultipartFile image) {
+        String imageUrl = s3Service.upload(image);
+
         // UserEntity를 데이터베이스에서 조회
         UserEntity userEntity = entityFinder.getUserById(userPrincipal.getId());
 
         // PetProfileDto를 PetEntity로 변환하고 저장
         PetEntity petEntity = PetProfileMapper.INSTANCE.petCreateDtoToPetEntity(petCreateDto);
+        petEntity.setPetPhoto(imageUrl);
         PetEntity savedPet = petJpaRepository.save(petEntity);
 
         // FamilyEntity 생성 및 저장
@@ -55,7 +63,6 @@ public class PetProfileService{
             .pet(savedPet)
             .role(Role.OWNER)
             .build();
-
         familyJpaRepository.save(familyEntity);
 
         // PetResponseDto 생성 및 반환
@@ -66,7 +73,7 @@ public class PetProfileService{
             .petBirthday(petEntity.getPetBirthday())
             .petGender(petEntity.getPetGender())
             .petWeight(petEntity.getPetWeight())
-            .petImageUrl(petEntity.getPetPhoto())
+            .petImageUrl(imageUrl)
             .build();
                
     }
