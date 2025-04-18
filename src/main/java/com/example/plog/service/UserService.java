@@ -18,6 +18,7 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.exceptions.NotFoundException;
+import com.example.plog.service.resolver.EntityFinder;
 import com.example.plog.web.dto.user.UserResponseDto;
 import com.example.plog.web.dto.user.UserUpdateDto;
 
@@ -39,21 +40,14 @@ public class UserService {
     FamilyJpaRepository familyJpaRepository;
 
     @Autowired
+    EntityFinder entityFinder;
+
+    @Autowired
     TokenProvider tokenProvider;
-
-    public UserEntity getUserById(Long userId) {
-        return userJpaRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
-    }
-
-    public UserEntity getUserByNickname(String nickname) {
-        return userJpaRepository.findByNickname(nickname)
-            .orElseThrow(() -> new NotFoundException("해당 닉네임의 사용자를 찾을 수 없습니다."));
-    }
 
     public UserResponseDto getUserInfo(UserPrincipal userPrincipal) {
         // 사용자 정보 조회
-        UserEntity user = getUserById(userPrincipal.getId());
+        UserEntity user = entityFinder.getUserById(userPrincipal.getId());
         return UserResponseDto.builder()
             .userId(user.getId())
             .nickname(user.getNickname())
@@ -65,7 +59,7 @@ public class UserService {
     public void updateUser(UserPrincipal userPrincipal, UserUpdateDto updateInfo) {
         // 사용자 정보 조회
         try {
-            UserEntity user = getUserById(userPrincipal.getId());
+            UserEntity user = entityFinder.getUserById(userPrincipal.getId());
             String updateNick = updateInfo.getNickname();
             String updatePassword = updateInfo.getAfterPassword();
 
@@ -102,7 +96,7 @@ public class UserService {
     public void updateProfileImage(UserPrincipal userPrincipal, String profileImage) {
         System.out.println(profileImage);
         // 사용자 정보 조회
-        UserEntity user = getUserById(userPrincipal.getId());
+        UserEntity user = entityFinder.getUserById(userPrincipal.getId());
         // 프로필 이미지 업데이트
         try {
             user.setProfileImage(profileImage);
@@ -116,7 +110,7 @@ public class UserService {
     @Transactional
     public void leavePet(UserPrincipal userPrincipal, String petName) {
         try {
-        UserEntity user = getUserById(userPrincipal.getId());
+        UserEntity user = entityFinder.getUserById(userPrincipal.getId());
         // 펫 정보 조회
         PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
             .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
@@ -129,7 +123,7 @@ public class UserService {
     }
 
     public UserResponseDto getFamilyList(UserPrincipal userPrincipal, String petName) {
-            UserEntity user = getUserById(userPrincipal.getId());
+            UserEntity user = entityFinder.getUserById(userPrincipal.getId());
             PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
             .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
             List<String> familyNickname = pet.getFamilyList().stream().map((family) -> family.getUser().getNickname()).filter((nickname)->!nickname.equals(user.getNickname())).toList();
