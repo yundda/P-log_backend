@@ -1,5 +1,8 @@
 package com.example.plog.web.dto.detaillog;
 
+import java.time.LocalTime;
+
+import com.example.plog.repository.Enum.Type;
 import com.example.plog.web.dto.petlog.PetLogDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,6 +29,6 @@ public class PetLogDetailLogDto {
         @JsonProperty("petLog") PetLogDto petlog,
         @JsonProperty("detailLog") DetailLogDto detailLog) {
         this.petlog = petlog;
-        this.detailLog = detailLog;
+        this.detailLog = detailLog;  
     }
 }

@@ -1,7 +1,10 @@
 package com.example.plog.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +24,24 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
 import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
+import com.example.plog.web.dto.detaillog.PetLogDetailLogPatchDto;
 import com.example.plog.web.dto.healthlog.HealthLogDto;
+import com.example.plog.web.dto.healthlog.HealthLogPatchDto;
 import com.example.plog.web.dto.healthlog.HealthLogResponseDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
 import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PetLogService {
+
+    private static final Logger log = LoggerFactory.getLogger(PetLogService.class);
 
     @Autowired
     PetlogJpaRepository petlogJpaRepository;
@@ -143,7 +152,7 @@ public class PetLogService {
         .userId(petlogEntity.getUser_id().getId())
         .type(petlogEntity.getType())
         .logId(healthlogEntity != null ? healthlogEntity.getLog_id().getId() : null)
-        .logTime(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
+        .logDate(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
         .build();
     }
 
@@ -194,6 +203,7 @@ public class PetLogService {
             ).toList();
     }
 
+    // HealthLog 조회
     public List<HealthLogResponseDto> getHealthLog(
         UserPrincipal userPrincipal,
         String petName
@@ -210,6 +220,7 @@ public class PetLogService {
             }
 
             return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
+                .log_id(healthLog.getLog_id().getId())
                 .vaccination(healthLog.getVaccination())
                 .vaccination_log(healthLog.getVaccination_log())
                 .hospital(healthLog.getHospital())
@@ -217,4 +228,104 @@ public class PetLogService {
                 .build()
             ).toList();
     }
-}
+
+    // DetailLog 수정
+    @Transactional
+    public void patchDetailLogs(
+        UserPrincipal userPrincipal,
+        PetLogDetailLogPatchDto petLogDetailLogPatchDto
+    ){
+        String    petName    = petLogDetailLogPatchDto.getPetName();
+        Long      userId     = userPrincipal.getId();
+        Type      oldType    = petLogDetailLogPatchDto.getOldType();
+        LocalDateTime oldLogTime = petLogDetailLogPatchDto.getOldLogTime();
+
+        DetaillogEntity detail = detaillogJpaRepository
+            .findByPetNameAndUserIdAndTypeAndLogTime(petName, userId, oldType, oldLogTime)
+            .orElseThrow(() -> new RuntimeException(
+                String.format("로그를 찾을 수 없습니다 (petName=%s, userId=%d, type=%s, logTime=%s)",
+                              petName, userId, oldType, oldLogTime)));
+
+        Type newType = petLogDetailLogPatchDto.getNewType();
+        if (newType != null && newType != oldType) {
+            PetlogEntity petlog = detail.getLog_id();
+            petlog.setType(newType);
+            petlogJpaRepository.save(petlog);
+        }
+
+        if (petLogDetailLogPatchDto.getNewLogTime() != null) detail.setLog_time(petLogDetailLogPatchDto.getNewLogTime());
+        if (petLogDetailLogPatchDto.getMealType()   != null) detail.setMeal_type(petLogDetailLogPatchDto.getMealType());
+        if (petLogDetailLogPatchDto.getPlace()      != null) detail.setPlace(petLogDetailLogPatchDto.getPlace());
+        if (petLogDetailLogPatchDto.getPrice()      != null) detail.setPrice(petLogDetailLogPatchDto.getPrice());
+        if (petLogDetailLogPatchDto.getTakeTime()   != null) detail.setTake_time(petLogDetailLogPatchDto.getTakeTime());
+        if (petLogDetailLogPatchDto.getMemo()       != null) detail.setMemo(petLogDetailLogPatchDto.getMemo());
+        
+        detaillogJpaRepository.save(detail);
+    }
+
+    // HealthLog 수정
+    @Transactional
+    public void patchHealthLogs(
+        UserPrincipal userPrincipal,
+        HealthLogPatchDto dto
+        ){
+            PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), dto.getPetName())
+            .orElseThrow(() -> new RuntimeException(
+                "Pet not found: " + dto.getPetName()));
+
+                HealthlogEntity healthlog = healthlogJpaRepository
+                .findByPetIdAndHospitalLog(pet.getId(), dto.getOldHospitalLog())
+                .orElseThrow(() -> new RuntimeException(
+                    "HealthLog not found for pet=" + dto.getPetName()
+                  + " at date=" + dto.getOldHospitalLog()));
+
+            boolean hasVaccine = dto.getVaccination()    != null
+                              || dto.getVaccinationLog() != null;
+
+             if (hasVaccine) {
+            // — 예방접종 정보 우선 반영
+            if (dto.getVaccination()    != null) healthlog.setVaccination(dto.getVaccination());
+            if (dto.getVaccinationLog() != null) healthlog.setVaccination_log(dto.getVaccinationLog());
+            // — 그 외 필드도 null 체크 후 반영
+            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
+            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
+             }
+            else {
+            // 예방접종 정보 없으면, 병원 방문 정보만
+            if (dto.getHospital()   != null) healthlog.setHospital(dto.getHospital());
+            if (dto.getHospitalLog() != null) healthlog.setHospital_log(dto.getHospitalLog());
+        }
+
+            healthlogJpaRepository.save(healthlog);
+        }
+
+    // Detailog 삭제
+    @Transactional
+    public void deleteDetailLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
+        System.out.println(">>> deleteDetailLogs called: userId=" + userPrincipal.getId()
+        + ", petName=" + petName 
+        + ", logTime=" + logTime);
+
+        PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), petName)
+            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+
+        System.out.println(">>> Found pet: id=" + pet.getId() + ", name=" + pet.getPetName());
+
+        System.out.println(">>> Before delete, total detail logs: " 
+                       + detaillogJpaRepository.findAllByPetId(pet.getId()).size());
+
+            detaillogJpaRepository.deleteByPetIdAndLogTime(pet.getId(), logTime);
+    }
+
+    // HealthLog 삭제
+    @Transactional
+    public void deleteHealthLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
+        PetEntity pet = familyJpaRepository
+            .findByUserIdAndPetName(userPrincipal.getId(), petName)
+            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+        healthlogJpaRepository.deleteByPetIdAndHospitalLog(pet.getId(), logTime);
+    }        
+        
+    }
