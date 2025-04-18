@@ -3,8 +3,6 @@ package com.example.plog.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +19,8 @@ import com.example.plog.repository.petlog.PetlogEntity;
 import com.example.plog.repository.petlog.PetlogJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.security.UserPrincipal;
+import com.example.plog.service.exceptions.NotFoundException;
+import com.example.plog.service.resolver.EntityFinder;
 import com.example.plog.web.dto.detaillog.DetailLogDto;
 import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.detaillog.PetLogDetailLogDto;
@@ -41,8 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PetLogService {
 
-    private static final Logger log = LoggerFactory.getLogger(PetLogService.class);
-
     @Autowired
     PetlogJpaRepository petlogJpaRepository;
 
@@ -58,15 +56,15 @@ public class PetLogService {
     @Autowired
     PetJpaRepository petJpaRepository;
 
+    @Autowired
+    EntityFinder entityFinder;
+
     
     // DetailLog 생성 메서드
     public PetLogDto createDetailLog(PetLogDetailLogDto petLogDetailLogDto) {
         String petName = petLogDetailLogDto.getPetlog().getName();
-        PetEntity petEntity = petJpaRepository.findByPetName(petName)
-                                .orElseThrow(() -> new RuntimeException("해당 이름의 반려동물을 찾을 수 없습니다. name: " + petName));
-
-        FamilyEntity familyEntity = familyJpaRepository.findById(petEntity.getId())
-                                .orElseThrow(() -> new RuntimeException("해당 ID의 FamilyEntity를 찾을 수 없습니다. ID: " + petEntity.getId()));
+        PetEntity petEntity = entityFinder.getPetByPetName(petName);
+        FamilyEntity familyEntity = entityFinder.getFamilyById(petEntity.getId());
 
         Long userId = familyEntity.getUser().getId();
 
@@ -123,11 +121,8 @@ public class PetLogService {
     // HealthLog 생성 메서드
     public PetLogDto createHealthLog(PetLogHealthLogDto petLogHealthLogDto) {
         String petName = petLogHealthLogDto.getPetlog().getName();
-        PetEntity petEntity = petJpaRepository.findByPetName(petName)
-                                .orElseThrow(() -> new RuntimeException("해당 이름의 반려동물을 찾을 수 없습니다. name: " + petName));
-
-        FamilyEntity familyEntity = familyJpaRepository.findById(petEntity.getId())
-                                .orElseThrow(() -> new RuntimeException("해당 ID의 FamilyEntity를 찾을 수 없습니다. ID: " + petEntity.getId()));
+        PetEntity petEntity = entityFinder.getPetByPetName(petName);
+        FamilyEntity familyEntity = entityFinder.getFamilyById(petEntity.getId());
 
         Long userId = familyEntity.getUser().getId();
 
@@ -179,15 +174,11 @@ public class PetLogService {
     public List<DetailLogResponseDto> getDetailLog(
         UserPrincipal userPrincipal,
         String petName){
-            PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), petName)
-                .orElseThrow(() -> new RuntimeException("Pet not found with userId: " 
-                                                      + userPrincipal.getId() 
-                                                      + " & petName: " + petName));
-
+            PetEntity petEntity = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
             Long petId = petEntity.getId();
             List<DetaillogEntity> detailLogs = detaillogJpaRepository.findAllByPetId(petId);
             if (detailLogs.isEmpty()) {
-                throw new RuntimeException("No detail logs found with petId: " + petId);
+                throw new NotFoundException("No detail logs found with petId: " + petId);
             }
 
 
@@ -208,15 +199,11 @@ public class PetLogService {
         UserPrincipal userPrincipal,
         String petName
     ){
-            PetEntity petEntity = familyJpaRepository.findByUserIdAndPetName(userPrincipal.getId(), petName)
-                .orElseThrow(() -> new RuntimeException("Pet not found with userId: " 
-                                                      + userPrincipal.getId() 
-                                                      + " & petName: " + petName));
-
+            PetEntity petEntity = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
             Long petId = petEntity.getId();
             List<HealthlogEntity> healthLogs = healthlogJpaRepository.findAllByPetId(petId);
             if (healthLogs.isEmpty()) {
-                throw new RuntimeException("No detail logs found with petId: " + petId);
+                throw new NotFoundException("No detail logs found with petId: " + petId);
             }
 
             return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
@@ -242,7 +229,7 @@ public class PetLogService {
 
         DetaillogEntity detail = detaillogJpaRepository
             .findByPetNameAndUserIdAndTypeAndLogTime(petName, userId, oldType, oldLogTime)
-            .orElseThrow(() -> new RuntimeException(
+            .orElseThrow(() -> new NotFoundException(
                 String.format("로그를 찾을 수 없습니다 (petName=%s, userId=%d, type=%s, logTime=%s)",
                               petName, userId, oldType, oldLogTime)));
 
@@ -269,14 +256,11 @@ public class PetLogService {
         UserPrincipal userPrincipal,
         HealthLogPatchDto dto
         ){
-            PetEntity pet = familyJpaRepository
-            .findByUserIdAndPetName(userPrincipal.getId(), dto.getPetName())
-            .orElseThrow(() -> new RuntimeException(
-                "Pet not found: " + dto.getPetName()));
+            PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), dto.getPetName());
 
                 HealthlogEntity healthlog = healthlogJpaRepository
                 .findByPetIdAndHospitalLog(pet.getId(), dto.getOldHospitalLog())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                     "HealthLog not found for pet=" + dto.getPetName()
                   + " at date=" + dto.getOldHospitalLog()));
 
@@ -307,9 +291,7 @@ public class PetLogService {
         + ", petName=" + petName 
         + ", logTime=" + logTime);
 
-        PetEntity pet = familyJpaRepository
-            .findByUserIdAndPetName(userPrincipal.getId(), petName)
-            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+        PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
 
         System.out.println(">>> Found pet: id=" + pet.getId() + ", name=" + pet.getPetName());
 
@@ -322,9 +304,7 @@ public class PetLogService {
     // HealthLog 삭제
     @Transactional
     public void deleteHealthLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
-        PetEntity pet = familyJpaRepository
-            .findByUserIdAndPetName(userPrincipal.getId(), petName)
-            .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
+        PetEntity pet = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
         healthlogJpaRepository.deleteByPetIdAndHospitalLog(pet.getId(), logTime);
     }        
         
