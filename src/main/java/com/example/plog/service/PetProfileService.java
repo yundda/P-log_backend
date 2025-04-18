@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.plog.repository.Enum.Role;
 import com.example.plog.repository.family.FamilyEntity;
@@ -40,17 +41,21 @@ public class PetProfileService{
 
     @Autowired
     UserJpaRepository userJpaRepository;
+
+    @Autowired
+    S3Service s3Service;
     
-    public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto) {
-        Long userId = userPrincipal.getId();
+    public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto, MultipartFile image) {
+        String imageUrl = s3Service.upload(image);
 
         // PetProfileDto를 PetEntity로 변환하고 저장
         PetEntity petEntity = PetProfileMapper.INSTANCE.petCreateDtoToPetEntity(petCreateDto);
+        petEntity.setPetPhoto(imageUrl);
         PetEntity savedPet = petJpaRepository.save(petEntity);
 
         // UserEntity를 데이터베이스에서 조회
-        UserEntity userEntity = userJpaRepository.findById(userId)
-        .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        UserEntity userEntity = userJpaRepository.findById(userPrincipal.getId())
+        .orElseThrow(() -> new NotFoundException("User not found with id: " + userPrincipal.getId()));
 
         // FamilyEntity 생성 및 저장
         FamilyEntity familyEntity = FamilyEntity.builder()
@@ -58,7 +63,6 @@ public class PetProfileService{
             .pet(savedPet)
             .role(Role.OWNER)
             .build();
-
         familyJpaRepository.save(familyEntity);
 
         // PetResponseDto 생성 및 반환
@@ -69,7 +73,7 @@ public class PetProfileService{
             .petBirthday(petEntity.getPetBirthday())
             .petGender(petEntity.getPetGender())
             .petWeight(petEntity.getPetWeight())
-            .petImageUrl(petEntity.getPetPhoto())
+            .petImageUrl(imageUrl)
             .build();
                
     }
