@@ -28,8 +28,7 @@ public class ExceptionalControllerAdvice {
     public ResponseEntity<ApiResponse<Void>> handleInvalidValueException(InvalidValueException ive) {
         return handleException(ive,HttpStatus.BAD_REQUEST,"BR");
     }
-
-    // 인증 실패(401) - 로그인, 권한 인증 등
+    // 인증 실패(401) - 로그인, 토큰 검증 실패 등
     @ExceptionHandler(AuthorizationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthorizationException(AuthorizationException ae) {
         return handleException(ae, HttpStatus.UNAUTHORIZED,"UN");
@@ -39,6 +38,7 @@ public class ExceptionalControllerAdvice {
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(NotFoundException nfe) {
         return handleException(nfe, HttpStatus.NOT_FOUND,"NF");
     }
+    // Forbiden(403) - 권한 없음(OWNER 권한) 등
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException ae) {
         return handleException(ae, HttpStatus.FORBIDDEN,"FB");
