@@ -57,7 +57,14 @@ public class RequestService {
             .orElse(null);
 
         if(request != null){
-            handleExistingRequest(request);
+            if(request.getStatus() == Status.PENDING){
+                return UserResponseDto.builder()
+                    .requestId(request.getId())
+                    .isAlreadyRequested(true)
+                    .build();
+            }else{
+                handleExistingRequest(request);
+            }
         }else{
             request = new RequestEntity(requester, pet, receiver, Status.PENDING,false);
         }
@@ -95,7 +102,14 @@ public class RequestService {
         };
         // 기존 요청이 있는 경우 응답 Status 확인
         if(request != null){
-            handleExistingRequest(request);
+            if(request.getStatus() == Status.PENDING){
+                return UserResponseDto.builder()
+                    .requestId(request.getId())
+                    .isAlreadyRequested(true)
+                    .build();
+            }else{
+                handleExistingRequest(request);
+            }
         }else {
             request = (receiver != null)
             ? new RequestEntity(requester, pet, receiver, Status.PENDING,true)
@@ -127,6 +141,7 @@ public class RequestService {
             .requesterNick(request.getRequester().getNickname())
             .petName(request.getPet().getPetName())
             .requestId(requestId)
+            .isRequesterOwner(request.getIsRequesterOwner())
             .build();
     }
     @Transactional
@@ -191,12 +206,12 @@ public class RequestService {
 
     private void handleExistingRequest(RequestEntity request) {
         switch (request.getStatus()) {
-            case PENDING:
-                throw new InvalidValueException("이미 요청이 존재합니다.");
             case ACCEPTED:
                 throw new InvalidValueException("해당 요청은 이미 수락되었습니다.");
             case REJECTED:
                 request.setStatus(Status.PENDING);
+                break;
+            default:
                 break;
         }
     }

@@ -1,8 +1,5 @@
 package com.example.plog.web.controller;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.plog.config.security.CurrentUser;
@@ -28,8 +24,6 @@ import com.example.plog.web.dto.healthlog.HealthLogPatchDto;
 import com.example.plog.web.dto.healthlog.HealthLogResponseDto;
 import com.example.plog.web.dto.healthlog.PetLogHealthLogDto;
 import com.example.plog.web.dto.petlog.PetLogDto;
-
-import jakarta.ws.rs.BadRequestException;
 
 @RestController
 @RequestMapping("/api/logs")
@@ -92,35 +86,23 @@ public class LogController {
         return ApiResponse.success();
     }
 
-    @DeleteMapping("/{petName}")
-    public ResponseEntity<ApiResponse<Void>> deleteDetailLogs(
-            @CurrentUser UserPrincipal userPrincipal,
-            @PathVariable String petName,
-            @RequestParam("time") String timeStr) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        LocalDateTime logTime;
-        try {
-            logTime = LocalDateTime.parse(timeStr, formatter);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("time 파라미터는 yyyyMMddHHmm 형식이어야 합니다.");
-        }
-        petLogService.deleteDetailLogs(userPrincipal, petName, logTime);
-        return ApiResponse.success(null);
-    }
+  // DetailLog 삭제
+  @DeleteMapping("/detail/{logId}")
+  public ResponseEntity<ApiResponse<Void>> deleteDetailLog(
+      @CurrentUser UserPrincipal userPrincipal,
+      @PathVariable Long logId
+  ) {
+      petLogService.deleteDetailLog(userPrincipal, logId);
+      return ApiResponse.success(null);
+  }
 
-    @DeleteMapping("/health/{petName}")
-    public ResponseEntity<ApiResponse<Void>> deleteHealthLogs(
-            @CurrentUser UserPrincipal userPrincipal,
-            @PathVariable String petName,
-            @RequestParam("time") String timeStr) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        LocalDateTime logTime;
-        try {
-            logTime = LocalDateTime.parse(timeStr, formatter);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("time 파라미터는 yyyyMMddHHmmss 형식이어야 합니다.");
-        }
-        petLogService.deleteHealthLogs(userPrincipal, petName, logTime);
-        return ApiResponse.success(null);
-    }
+  // HealthLog 삭제
+  @DeleteMapping("/health/{logId}")
+  public ResponseEntity<ApiResponse<Void>> deleteHealthLog(
+      @CurrentUser UserPrincipal userPrincipal,
+      @PathVariable Long logId
+  ) {
+      petLogService.deleteHealthLog(userPrincipal, logId);
+      return ApiResponse.success(null);
+  }
 }

@@ -17,7 +17,6 @@ import lombok.Setter;
 @AllArgsConstructor 
 @Builder
 public class PetLogDetailLogPatchDto {
-    private DetailLogDto detailLog;
     private String petName;
     private Long log_id;
     private Type newType;
