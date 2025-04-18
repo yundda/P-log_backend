@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v3
 
       - name: Set up JDK
@@ -18,32 +18,46 @@ jobs:
           java-version: 17
           distribution: "temurin"
 
-      - name: Update .env # env 만드는 것
+      - name: Create .env file
         run: |
-          echo "DB_PROD_USERNAME=${{ secrets.DB_PROD_USERNAME }}" > .env
-          echo "DB_PROD_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" > .env
-          echo "DB_PROD_URL=${{ secrets.DB_PROD_URL }}" > .env
+          echo "SERVER_PORT=${{ secrets.SERVER_PORT }}" > .env
+          echo "MANAGER_PORT=${{ secrets.MANAGER_PORT }}" >> .env
+          echo "DB_PROD_USERNAME=${{ secrets.DB_PROD_USERNAME }}" >> .env
+          echo "DB_PROD_PASSWORD=${{ secrets.DB_PROD_PASSWORD }}" >> .env
+          echo "DB_PROD_URL=${{ secrets.DB_PROD_URL }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
           echo "SPRING_PROFILES_ACTIVE=prod" >> .env
 
-      - name: Maven Build
+      - name: Check .env contents
+        run: |
+          echo "🔍 생성된 .env 내용:"
+          cat .env
+
+      - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Prepare deploy directory
+        run: |
+          mkdir -p deploy
+          cp .env deploy/
+          cp target/*.jar deploy/
+
+      - name: Deploy to EC2
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
-          source: |
-            target/*.jar
-            .env
+          source: deploy/
           target: /home/ubuntu/p-log/P-log_backend/
 
-      - name: Restart Spring Boot on EC2
+      - name: Restart Spring Boot App on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
+            echo "🚀 start.sh 실행 중..."
             bash /home/ubuntu/p-log/P-log_backend/start.sh

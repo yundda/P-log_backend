@@ -35,8 +35,7 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exception -> new AuthorizationException("UnAuthorized"))
             .authorizeHttpRequests(authorize ->
-            //api/pets 나중에 삭제
-                  authorize.requestMatchers("/api", "/api/auth/**", "/api/pets/**").permitAll()
+                  authorize.requestMatchers("/api", "/api/auth/**").permitAll()
                            .anyRequest().authenticated()
             );
         // filter 등록: 매 요청마다 CorsFilter 실행한 후에 (의존성 주입한) jwtAuthenticationFilter 실행

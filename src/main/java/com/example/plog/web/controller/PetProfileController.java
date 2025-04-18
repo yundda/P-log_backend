@@ -50,12 +50,12 @@ public class PetProfileController {
         return ApiResponse.success(petList);
       }
 
-      @PostMapping("/profile/{petName}")
+      @GetMapping("/profile/{petName}")
       public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(
         @CurrentUser UserPrincipal userPrincipal,
-        @PathVariable String name
+        @PathVariable String petName
         ) {
-        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, name);
+        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, petName);
         return ApiResponse.success(response);
     }
 
@@ -70,9 +70,9 @@ public class PetProfileController {
       @DeleteMapping("/delete/{petName}")
       public ResponseEntity<ApiResponse<Void>> deletePet(
         @CurrentUser UserPrincipal userPrincipal,
-        @PathVariable String name
+        @PathVariable String petName
         ){
-          petProfileService.deletePet(userPrincipal, name);
+          petProfileService.deletePet(userPrincipal, petName);
           return ApiResponse.success();
       }
 
