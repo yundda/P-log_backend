@@ -21,6 +21,7 @@ public class UserResponseDto {
     private Long userId;
     private String nickname;
     private String email;
+    private String profileImage;
     
     private Long requestId;
     private String requesterNick;
@@ -30,6 +31,7 @@ public class UserResponseDto {
     private String token;
 
     private Boolean isRegisteredUser;
+    private Boolean isRequesterOwner;
     private Boolean isAlreadyRequested;
     private List<String> familyList;
 }

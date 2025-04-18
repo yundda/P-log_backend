@@ -51,6 +51,10 @@ public class UserEntity extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_image")
+    @Builder.Default
+    private String profileImage = "profile1";
+
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private List<FamilyEntity> familyList = new ArrayList<>();

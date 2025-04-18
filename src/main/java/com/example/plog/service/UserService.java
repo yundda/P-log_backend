@@ -58,6 +58,7 @@ public class UserService {
             .userId(user.getId())
             .nickname(user.getNickname())
             .email(user.getEmail())
+            .profileImage(user.getProfileImage())
             .build();
     }
     @Transactional
@@ -74,7 +75,6 @@ public class UserService {
             }else if(!passwordEncoder.matches(updateInfo.getBeforePassword(), user.getPassword())) {
                     throw new InvalidValueException("기존 비밀번호를 일치하지 않습니다.");
             }
-
             // 사용자 정보 유효성 검사
             if (updateNick == null && updatePassword == null) {
                 throw new InvalidValueException("변경할 정보가 없습니다.");
@@ -92,11 +92,27 @@ public class UserService {
                 String encodedPassword = passwordEncoder.encode(updatePassword);
                 user.setPassword(encodedPassword);
             }
+
         } catch (DataAccessException e) {
-            log.error("Error Update User: {}", e.getMessage());
+            log.error("사용자 정보 DB 업데이트 오류: {}", e.getMessage());
             throw new DatabaseException("사용자 정보 DB 업데이트에 실패했습니다.");
         }
     }
+
+    public void updateProfileImage(UserPrincipal userPrincipal, String profileImage) {
+        System.out.println(profileImage);
+        // 사용자 정보 조회
+        UserEntity user = getUserById(userPrincipal.getId());
+        // 프로필 이미지 업데이트
+        try {
+            user.setProfileImage(profileImage);
+            userJpaRepository.save(user);
+        } catch (DataAccessException e) {
+            log.error("프로필 이미지 DB 업데이트 오류: {}", e.getMessage());
+            throw new DatabaseException("사용자 프로필 이미지 DB 업데이트에 실패했습니다.");
+        }
+    }
+
     @Transactional
     public void leavePet(UserPrincipal userPrincipal, String petName) {
         try {
@@ -116,7 +132,7 @@ public class UserService {
             UserEntity user = getUserById(userPrincipal.getId());
             PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
             .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
-            List<String> familyNickname = pet.getFamilyList().stream().map((family) -> family.getUser().getNickname()).toList();
+            List<String> familyNickname = pet.getFamilyList().stream().map((family) -> family.getUser().getNickname()).filter((nickname)->!nickname.equals(user.getNickname())).toList();
             return UserResponseDto.builder()
                 .familyList(familyNickname)
                 .build();

@@ -33,6 +33,11 @@ public class UserController {
         userService.updateUser(userPrincipal, updateInfo);
         return ApiResponse.success();
     }
+    @PatchMapping("/update/{profileImage}")
+    public ResponseEntity<ApiResponse<Void>> updateProfileImage(@CurrentUser UserPrincipal userPrincipal, @PathVariable String profileImage) {
+        userService.updateProfileImage(userPrincipal, profileImage);
+        return ApiResponse.success();
+    }
 
     @GetMapping("/leave/{petName}")
     public ResponseEntity<ApiResponse<Void>> leavePet(@CurrentUser UserPrincipal userPrincipal, @PathVariable String petName) {

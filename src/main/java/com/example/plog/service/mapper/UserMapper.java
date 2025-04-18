@@ -12,6 +12,7 @@ public interface UserMapper {
 
     @Mapping(target="id", ignore = true)
     @Mapping(target="familyList", ignore = true)
+    @Mapping(target="profileImage", ignore = true)
     UserEntity userRegistrationDtoToUserEntity(UserRegistrationDto userRegistrationDto);
 }
 
