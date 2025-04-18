@@ -49,6 +49,6 @@ public class HealthlogEntity extends BaseEntity {
     @Column(name = "hospital")
     private String hospital;
 
-    @Column(name = "hospital_log")
+    @Column(name = "hospital_log", columnDefinition = "DATETIME")
     private LocalDateTime hospital_log;
 }

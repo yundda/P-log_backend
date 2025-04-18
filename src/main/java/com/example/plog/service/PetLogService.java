@@ -1,9 +1,10 @@
 package com.example.plog.service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +34,14 @@ import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PetLogService {
+
+    private static final Logger log = LoggerFactory.getLogger(PetLogService.class);
 
     @Autowired
     PetlogJpaRepository petlogJpaRepository;
@@ -199,6 +203,7 @@ public class PetLogService {
             ).toList();
     }
 
+    // HealthLog 조회
     public List<HealthLogResponseDto> getHealthLog(
         UserPrincipal userPrincipal,
         String petName
@@ -215,6 +220,7 @@ public class PetLogService {
             }
 
             return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
+                .log_id(healthLog.getLog_id().getId())
                 .vaccination(healthLog.getVaccination())
                 .vaccination_log(healthLog.getVaccination_log())
                 .hospital(healthLog.getHospital())
@@ -223,6 +229,7 @@ public class PetLogService {
             ).toList();
     }
 
+    // DetailLog 수정
     @Transactional
     public void patchDetailLogs(
         UserPrincipal userPrincipal,
@@ -256,6 +263,7 @@ public class PetLogService {
         detaillogJpaRepository.save(detail);
     }
 
+    // HealthLog 수정
     @Transactional
     public void patchHealthLogs(
         UserPrincipal userPrincipal,
@@ -291,20 +299,33 @@ public class PetLogService {
 
             healthlogJpaRepository.save(healthlog);
         }
+
+    // Detailog 삭제
     @Transactional
-    public void deleteDetailLogs(UserPrincipal userPrincipal, String petName) {
+    public void deleteDetailLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
+        System.out.println(">>> deleteDetailLogs called: userId=" + userPrincipal.getId()
+        + ", petName=" + petName 
+        + ", logTime=" + logTime);
+
         PetEntity pet = familyJpaRepository
             .findByUserIdAndPetName(userPrincipal.getId(), petName)
             .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
-        detaillogJpaRepository.deleteAllByPetId(pet.getId());
+
+        System.out.println(">>> Found pet: id=" + pet.getId() + ", name=" + pet.getPetName());
+
+        System.out.println(">>> Before delete, total detail logs: " 
+                       + detaillogJpaRepository.findAllByPetId(pet.getId()).size());
+
+            detaillogJpaRepository.deleteByPetIdAndLogTime(pet.getId(), logTime);
     }
 
+    // HealthLog 삭제
     @Transactional
-    public void deleteHealthLogs(UserPrincipal userPrincipal, String petName) {
+    public void deleteHealthLogs(UserPrincipal userPrincipal, String petName, LocalDateTime logTime) {
         PetEntity pet = familyJpaRepository
             .findByUserIdAndPetName(userPrincipal.getId(), petName)
             .orElseThrow(() -> new RuntimeException("Pet not found: " + petName));
-        healthlogJpaRepository.deleteAllByPetId(pet.getId());
+        healthlogJpaRepository.deleteByPetIdAndHospitalLog(pet.getId(), logTime);
     }        
         
     }

@@ -2,6 +2,7 @@ package com.example.plog.web.dto.healthlog;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -23,5 +24,6 @@ public class HealthLogDto {
     private Boolean vaccinationLog;
     private String hospital;
     @JsonProperty("hospital_log")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime hospitalLog;
 }

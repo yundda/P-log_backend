@@ -19,6 +19,7 @@ import lombok.Setter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HealthLogResponseDto {
+    private Long log_id;
     private String vaccination;
     @JsonProperty("vaccination_log")
     private Boolean vaccination_log;

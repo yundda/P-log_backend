@@ -1,5 +1,7 @@
 package com.example.plog;
 
+import java.util.TimeZone;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -24,7 +26,7 @@ public class PlogApplication {
         System.setProperty("DB_PROD_URL", dotenv.get("DB_PROD_URL"));
         System.setProperty("JWT_ISSUER", dotenv.get("JWT_ISSUER"));
         System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
-
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 		SpringApplication.run(PlogApplication.class, args);
 	}
 

@@ -45,7 +45,7 @@ public class DetaillogEntity extends BaseEntity {
     @JoinColumn(name = "log_id", nullable = false)
     private PetlogEntity log_id;
 
-    @Column(name = "log_time", nullable = false)
+    @Column(name = "log_time", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime log_time;
 
     @Enumerated(EnumType.STRING)

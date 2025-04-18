@@ -29,9 +29,11 @@ public interface HealthlogJpaRepository extends JpaRepository<HealthlogEntity,Lo
     @Transactional
     @Query(
       "DELETE FROM HealthlogEntity h " +
-      " WHERE h.log_id.id IN (" +
-      "   SELECT pl.id FROM PetlogEntity pl WHERE pl.pet_id.id = :petId" +
-      ")"
+      " WHERE h.log_id.pet_id.id   = :petId " +
+      "   AND h.hospital_log        = :hospitalLog"
     )
-    void deleteAllByPetId(@Param("petId") Long petId);
+    void deleteByPetIdAndHospitalLog(
+        @Param("petId")       Long petId,
+        @Param("hospitalLog") LocalDateTime hospitalLog
+    );
 }

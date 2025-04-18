@@ -32,13 +32,18 @@ public interface DetaillogJpaRepository extends JpaRepository<DetaillogEntity,Lo
         @Param("logTime")  LocalDateTime logTime
     );
 
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Transactional
     @Query(
       "DELETE FROM DetaillogEntity d " +
-      " WHERE d.log_id.id IN (" +
-      "   SELECT pl.id FROM PetlogEntity pl WHERE pl.pet_id.id = :petId" +
-      ")"
+      " WHERE d.log_id.id IN ( " +
+      "   SELECT pl.id FROM PetlogEntity pl " +
+      "    WHERE pl.pet_id.id = :petId " +
+      " ) " +
+      "   AND d.log_time = :logTime"
     )
-    void deleteAllByPetId(@Param("petId") Long petId);
+    void deleteByPetIdAndLogTime(
+        @Param("petId")   Long             petId,
+        @Param("logTime") LocalDateTime   logTime
+    );
 }
