@@ -16,7 +16,6 @@ import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.family.FamilyEntity;
 import com.example.plog.repository.pet.PetEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
