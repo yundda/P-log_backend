@@ -87,7 +87,7 @@ public class LogController {
     }
 
   // DetailLog 삭제
-  @DeleteMapping("/detail/{logId}")
+  @DeleteMapping("/{logId}")
   public ResponseEntity<ApiResponse<Void>> deleteDetailLog(
       @CurrentUser UserPrincipal userPrincipal,
       @PathVariable Long logId
