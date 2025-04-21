@@ -21,7 +21,6 @@ import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.service.resolver.EntityFinder;
-import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
@@ -173,9 +172,6 @@ public class PetProfileService{
 
         // 데이터베이스에서 관련 FamilyEntity 삭제
         familyJpaRepository.deleteAllByPet(petEntity);
-        detailLogJpaRepository.deleteAllByPetId(pet.getId());
-        healthLogJpaRepository.deleteAllByPetId(pet.getId());
-        petLogJpaRepository.deleteAllByPetId(pet.getId());
 
         // 데이터베이스에서 반려동물 엔티티 삭제
         petJpaRepository.deleteById(petEntity.getId());
