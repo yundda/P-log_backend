@@ -3,6 +3,7 @@ package com.example.plog.web.dto.detaillog;
 import java.time.LocalDateTime;
 
 import com.example.plog.repository.Enum.Mealtype;
+import com.example.plog.repository.Enum.Type;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -25,4 +26,5 @@ public class DetailLogResponseDto {
     private Integer price;
     private Integer take_time;
     private String memo;
+    private Type type;
 }

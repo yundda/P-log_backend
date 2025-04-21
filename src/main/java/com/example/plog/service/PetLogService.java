@@ -191,6 +191,7 @@ public class PetLogService {
                 .price(detailLog.getPrice())
                 .take_time(detailLog.getTake_time())
                 .memo(detailLog.getMemo())
+                .type(detailLog.getLog_id().getType())
                 .build()
             ).toList();
     }
