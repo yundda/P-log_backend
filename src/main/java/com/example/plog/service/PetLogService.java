@@ -184,7 +184,7 @@ public class PetLogService {
 
 
             return detailLogs.stream().map(detailLog -> DetailLogResponseDto.builder()
-                .log_id(detailLog.getLog_id().getId())      
+                .log_id(detailLog.getId())      
                 .log_time(detailLog.getLog_time())
                 .mealType(detailLog.getMeal_type())         
                 .place(detailLog.getPlace())
@@ -203,12 +203,9 @@ public class PetLogService {
             PetEntity petEntity = entityFinder.getPetByUserIdAndPetName(userPrincipal.getId(), petName);
             Long petId = petEntity.getId();
             List<HealthlogEntity> healthLogs = healthlogJpaRepository.findAllByPetId(petId);
-            if (healthLogs.isEmpty()) {
-                throw new NotFoundException("요청한 데이터를 찾을 수 없습니다 : " + petId);
-            }
 
             return healthLogs.stream().map(healthLog -> HealthLogResponseDto.builder()
-                .log_id(healthLog.getLog_id().getId())
+                .log_id(healthLog.getId())
                 .vaccination(healthLog.getVaccination())
                 .vaccination_log(healthLog.getVaccination_log())
                 .hospital(healthLog.getHospital())
@@ -262,7 +259,7 @@ public class PetLogService {
         HealthLogPatchDto dto
         ){
             HealthlogEntity healthlog = healthlogJpaRepository.findById(dto.getLog_id())
-            .orElseThrow(() -> new NotFoundException("HealthLog not found: id=" + dto.getLog_id()));
+            .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + dto.getLog_id()));
 
             Long ownerId = healthlog.getLog_id()
             .getUser_id().getId(); 
