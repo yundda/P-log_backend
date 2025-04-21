@@ -20,6 +20,7 @@ public class PlogApplication {
         // System.out.println(profile);
         // if("local".equals(profile)){
             Dotenv dotenv = Dotenv.configure().directory("/home/ubuntu/p-log/P-log_backend/deploy").ignoreIfMissing().load();
+            System.out.println(dotenv.get("SERVER_PORT"));
             // Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
             System.setProperty("SERVER_PORT", dotenv.get("SERVER_PORT"));
             System.setProperty("MANAGER_PORT", dotenv.get("MANAGER_PORT"));
