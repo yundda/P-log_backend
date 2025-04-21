@@ -1,8 +1,8 @@
 package com.example.plog.web.dto.healthlog;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,12 +18,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HealthLogDto {
+public class HealthLogResponseDto {
+    private Long log_id;
     private String vaccination;
     @JsonProperty("vaccination_log")
-    private Boolean vaccinationLog;
+    private Boolean vaccination_log;
     private String hospital;
-    @JsonProperty("hospital_log")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime hospitalLog;
+    private LocalDateTime hospital_log;
 }

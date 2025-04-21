@@ -1,6 +1,6 @@
 package com.example.plog.repository.healthlog;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.petlog.PetlogEntity;
@@ -49,7 +49,6 @@ public class HealthlogEntity extends BaseEntity {
     @Column(name = "hospital")
     private String hospital;
 
-    @Column(name = "hospital_log")
-    private LocalTime hospital_log;
-
+    @Column(name = "hospital_log", columnDefinition = "DATETIME")
+    private LocalDateTime hospital_log;
 }

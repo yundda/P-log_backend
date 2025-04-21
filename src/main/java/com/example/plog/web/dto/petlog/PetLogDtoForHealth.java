@@ -1,8 +1,7 @@
 package com.example.plog.web.dto.petlog;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
-import com.example.plog.repository.Enum.Mealtype;
 import com.example.plog.repository.Enum.Type;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -18,17 +17,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PetLogDto {
+public class PetLogDtoForHealth {
     private String name;
     private Long petId;
     private Long userId;
     private Type type;
     private Long logId;
-    private LocalDateTime logTime;
-    private LocalDateTime logDate;
-    private Mealtype mealType;
-    private String place;
-    private Integer price;
-    private Integer takeTime;
-    private String memo;
+    private String vaccination;
+    private Boolean vaccination_log;
+    private String hospital;
+    private LocalTime hospital_log;
 }

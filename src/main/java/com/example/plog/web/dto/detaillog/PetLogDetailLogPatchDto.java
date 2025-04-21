@@ -1,10 +1,9 @@
-package com.example.plog.web.dto.petlog;
+package com.example.plog.web.dto.detaillog;
 
 import java.time.LocalDateTime;
 
 import com.example.plog.repository.Enum.Mealtype;
 import com.example.plog.repository.Enum.Type;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,20 +11,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+@Getter 
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor 
+@AllArgsConstructor 
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PetLogDto {
-    private String name;
-    private Long petId;
-    private Long userId;
-    private Type type;
-    private Long logId;
-    private LocalDateTime logTime;
-    private LocalDateTime logDate;
+public class PetLogDetailLogPatchDto {
+    private String petName;
+    private Long log_id;
+    private Type newType;
+    private LocalDateTime newLogTime;
     private Mealtype mealType;
     private String place;
     private Integer price;

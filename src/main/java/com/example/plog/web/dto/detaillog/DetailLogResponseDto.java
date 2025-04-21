@@ -1,4 +1,4 @@
-package com.example.plog.web.dto.petlog;
+package com.example.plog.web.dto.detaillog;
 
 import java.time.LocalDateTime;
 
@@ -18,17 +18,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PetLogDto {
-    private String name;
-    private Long petId;
-    private Long userId;
-    private Type type;
-    private Long logId;
-    private LocalDateTime logTime;
-    private LocalDateTime logDate;
+public class DetailLogResponseDto {
+    private Long log_id;
+    private LocalDateTime log_time;
     private Mealtype mealType;
     private String place;
     private Integer price;
-    private Integer takeTime;
+    private Integer take_time;
     private String memo;
+    private Type type;
 }

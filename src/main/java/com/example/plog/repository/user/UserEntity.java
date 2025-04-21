@@ -16,7 +16,6 @@ import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.family.FamilyEntity;
 import com.example.plog.repository.pet.PetEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +49,10 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "profile_image")
+    @Builder.Default
+    private String profileImage = "profile1";
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude

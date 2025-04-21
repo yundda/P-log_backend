@@ -2,6 +2,7 @@ package com.example.plog.web.controller;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.plog.config.security.CurrentUser;
 import com.example.plog.security.UserPrincipal;
@@ -22,6 +25,7 @@ import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
 import com.example.plog.web.dto.pet.PetUpdateDto;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -36,12 +40,12 @@ public class PetProfileController {
     @Autowired
     PetProfileService petProfileService;
 
-      @PostMapping
+      @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
       public ResponseEntity<ApiResponse<PetResponseDto>> createPet(
               @CurrentUser UserPrincipal userPrincipal, 
-              @RequestBody PetCreateDto petCreateDto) {
-                log.info("petprofiledto : {}", petCreateDto);
-          PetResponseDto response = petProfileService.createPet(userPrincipal, petCreateDto);
+              @RequestPart("info") @Valid PetCreateDto petCreateDto,
+              @RequestPart("image") MultipartFile image) {
+          PetResponseDto response = petProfileService.createPet(userPrincipal, petCreateDto, image);
           return ApiResponse.success(response);
       }
 
@@ -51,12 +55,12 @@ public class PetProfileController {
         return ApiResponse.success(petList);
       }
 
-      @PostMapping("/profile/{petName}")
+      @GetMapping("/profile/{petName}")
       public ResponseEntity<ApiResponse<PetResponseDto>> getPetById(
         @CurrentUser UserPrincipal userPrincipal,
-        @PathVariable String name
+        @PathVariable String petName
         ) {
-        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, name);
+        PetResponseDto response = petProfileService.getPetProfileByUser(userPrincipal, petName);
         return ApiResponse.success(response);
     }
 
@@ -71,9 +75,9 @@ public class PetProfileController {
       @DeleteMapping("/delete/{petName}")
       public ResponseEntity<ApiResponse<Void>> deletePet(
         @CurrentUser UserPrincipal userPrincipal,
-        @PathVariable String name
+        @PathVariable String petName
         ){
-          petProfileService.deletePet(userPrincipal, name);
+          petProfileService.deletePet(userPrincipal, petName);
           return ApiResponse.success();
       }
 
