@@ -9,15 +9,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.plog.repository.Enum.Role;
+import com.example.plog.repository.detaillog.DetaillogJpaRepository;
 import com.example.plog.repository.family.FamilyEntity;
 import com.example.plog.repository.family.FamilyJpaRepository;
+import com.example.plog.repository.healthlog.HealthlogJpaRepository;
 import com.example.plog.repository.pet.PetEntity;
 import com.example.plog.repository.pet.PetJpaRepository;
+import com.example.plog.repository.petlog.PetlogJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.service.resolver.EntityFinder;
+import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;
@@ -44,7 +48,17 @@ public class PetProfileService{
 
     @Autowired
     S3Service s3Service;
+
+    @Autowired
+    DetaillogJpaRepository detaillogJpaRepository;
+
+    @Autowired
+    HealthlogJpaRepository healthlogJpaRepository;
+
+    @Autowired
+    PetlogJpaRepository petlogJpaRepository;
     
+
     public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto, MultipartFile image) {
         String imageUrl = s3Service.upload(image);
 
@@ -159,6 +173,9 @@ public class PetProfileService{
 
         // 데이터베이스에서 관련 FamilyEntity 삭제
         familyJpaRepository.deleteAllByPet(petEntity);
+        detailLogJpaRepository.deleteAllByPetId(pet.getId());
+        healthLogJpaRepository.deleteAllByPetId(pet.getId());
+        petLogJpaRepository.deleteAllByPetId(pet.getId());
 
         // 데이터베이스에서 반려동물 엔티티 삭제
         petJpaRepository.deleteById(petEntity.getId());

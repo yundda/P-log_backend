@@ -36,4 +36,8 @@ public interface HealthlogJpaRepository extends JpaRepository<HealthlogEntity,Lo
         @Param("petId")       Long petId,
         @Param("hospitalLog") LocalDateTime hospitalLog
     );
+
+    @Modifying
+    @Query("delete from DetailLogEntity d where d.pet.id = :petId")
+    void deleteAllByPetId(@Param("petId") Long petId);
 }

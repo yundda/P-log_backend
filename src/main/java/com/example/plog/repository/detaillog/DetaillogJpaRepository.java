@@ -46,4 +46,8 @@ public interface DetaillogJpaRepository extends JpaRepository<DetaillogEntity,Lo
         @Param("petId")   Long             petId,
         @Param("logTime") LocalDateTime   logTime
     );
+
+    @Modifying
+    @Query("delete from DetailLogEntity d where d.pet.id = :petId")
+    void deleteAllByPetId(@Param("petId") Long petId);
 }
