@@ -158,7 +158,7 @@ public class PetProfileService{
         PetEntity petEntity = entityFinder.findPetOrThrowIfNotFoundOrIfNotOwner(name, userEntity);
 
         // 데이터베이스에서 관련 FamilyEntity 삭제
-        familyJpaRepository.deleteByUserAndPet(userEntity, petEntity);
+        familyJpaRepository.deleteAllByPet(petEntity);
 
         // 데이터베이스에서 반려동물 엔티티 삭제
         petJpaRepository.deleteById(petEntity.getId());

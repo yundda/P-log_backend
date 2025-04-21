@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.plog.repository.Enum.Role;
@@ -24,5 +26,6 @@ public interface FamilyJpaRepository extends JpaRepository<FamilyEntity,Long>{
 
     List<FamilyEntity> findByUserId(Long userId);
 
-    void deleteByPet(PetEntity pet);
+    @Modifying @Query("delete from FamilyEntity f where f.pet = :pet")
+    void deleteAllByPet(@Param("pet") PetEntity pet);
 }
