@@ -21,7 +21,6 @@ import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.mapper.PetProfileMapper;
 import com.example.plog.service.resolver.EntityFinder;
-import com.example.plog.web.dto.detaillog.DetailLogResponseDto;
 import com.example.plog.web.dto.pet.PetCreateDto;
 import com.example.plog.web.dto.pet.PetProfileListDto;
 import com.example.plog.web.dto.pet.PetResponseDto;

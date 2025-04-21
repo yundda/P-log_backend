@@ -29,7 +29,4 @@ public interface FamilyJpaRepository extends JpaRepository<FamilyEntity,Long>{
     @Modifying @Query("delete from FamilyEntity f where f.pet = :pet")
     void deleteAllByPet(@Param("pet") PetEntity pet);
 
-    @Modifying
-    @Query("delete from DetailLogEntity d where d.pet.id = :petId")
-    void deleteAllByPetId(@Param("petId") Long petId);
 }
