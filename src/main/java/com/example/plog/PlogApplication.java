@@ -19,7 +19,8 @@ public class PlogApplication {
         // String profile = System.getenv("SPRING_PROFILES_ACTIVE");
         // System.out.println(profile);
         // if("local".equals(profile)){
-            Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+            Dotenv dotenv = Dotenv.configure().directory("/home/ubuntu/p-log/P-log_backend/deploy").ignoreIfMissing().load();
+            // Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
             System.setProperty("SERVER_PORT", dotenv.get("SERVER_PORT"));
             System.setProperty("MANAGER_PORT", dotenv.get("MANAGER_PORT"));
             // System.setProperty("DB_DEV_USERNAME", dotenv.get("DB_DEV_USERNAME"));
