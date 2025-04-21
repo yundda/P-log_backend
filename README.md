@@ -22,6 +22,7 @@ P-log_backend
 ├─ .mvn
 │  └─ wrapper
 │     └─ maven-wrapper.properties
+├─ Dockerfile
 ├─ README.md
 ├─ mvnw
 ├─ mvnw.cmd
@@ -41,6 +42,7 @@ P-log_backend
    │  │           │  ├─ jwt
    │  │           │  │  └─ JwtProperties.java
    │  │           │  └─ security
+   │  │           │     ├─ CurrentUser.java
    │  │           │     └─ SecurityConfig.java
    │  │           ├─ repository
    │  │           │  ├─ BaseEntity.java
@@ -73,36 +75,70 @@ P-log_backend
    │  │           │     └─ UserJpaRepository.java
    │  │           ├─ security
    │  │           │  ├─ JwtAuthenticationFilter.java
-   │  │           │  └─ TokenProvider.java
+   │  │           │  ├─ TokenProvider.java
+   │  │           │  └─ UserPrincipal.java
    │  │           ├─ service
    │  │           │  ├─ AuthService.java
+   │  │           │  ├─ PetLogService.java
    │  │           │  ├─ PetProfileService.java
+   │  │           │  ├─ RequestService.java
    │  │           │  ├─ UserService.java
    │  │           │  ├─ exceptions
+   │  │           │  │  ├─ AuthenticationException.java
    │  │           │  │  ├─ AuthorizationException.java
    │  │           │  │  ├─ DatabaseException.java
    │  │           │  │  ├─ InvalidValueException.java
    │  │           │  │  └─ NotFoundException.java
-   │  │           │  └─ mapper
-   │  │           │     ├─ PetProfileMapper.java
-   │  │           │     └─ UserMapper.java
+   │  │           │  ├─ mapper
+   │  │           │  │  ├─ DetailLogMapper.java
+   │  │           │  │  ├─ FamilyMapper.java
+   │  │           │  │  ├─ PetProfileMapper.java
+   │  │           │  │  └─ UserMapper.java
+   │  │           │  └─ resolver
+   │  │           │     └─ EntityFinder.java
    │  │           └─ web
    │  │              ├─ advice
    │  │              │  └─ ExceptionalControllerAdvice.java
    │  │              ├─ controller
    │  │              │  ├─ AuthController.java
+   │  │              │  ├─ LogController.java
    │  │              │  ├─ PetProfileController.java
+   │  │              │  ├─ RequestController.java
    │  │              │  ├─ TestController.java
    │  │              │  └─ UserController.java
    │  │              └─ dto
    │  │                 ├─ ApiResponse.java
    │  │                 ├─ PetProfileDto.java
+   │  │                 ├─ detaillog
+   │  │                 │  ├─ DetailLogDto.java
+   │  │                 │  ├─ DetailLogResponseDto.java
+   │  │                 │  ├─ PetLogDetailLogDto.java
+   │  │                 │  └─ PetLogDetailLogPatchDto.java
+   │  │                 ├─ healthlog
+   │  │                 │  ├─ HealthLogDto.java
+   │  │                 │  ├─ HealthLogPatchDto.java
+   │  │                 │  ├─ HealthLogResponseDto.java
+   │  │                 │  └─ PetLogHealthLogDto.java
+   │  │                 ├─ pet
+   │  │                 │  ├─ PetCreateDto.java
+   │  │                 │  ├─ PetProfileListDto.java
+   │  │                 │  ├─ PetResponseDto.java
+   │  │                 │  └─ PetUpdateDto.java
+   │  │                 ├─ petlog
+   │  │                 │  ├─ PetLogDto.java
+   │  │                 │  ├─ PetLogDtoForHealth.java
+   │  │                 │  └─ PetLogResponseDto.java
+   │  │                 ├─ request
+   │  │                 │  ├─ RequestInviteDto.java
+   │  │                 │  └─ RequestPermissionDto.java
    │  │                 └─ user
-   │  │                    ├─ UserDto.java
    │  │                    ├─ UserLoginDto.java
    │  │                    ├─ UserRegistrationDto.java
-   │  │                    └─ UserResponseDto.java
+   │  │                    ├─ UserResponseDto.java
+   │  │                    └─ UserUpdateDto.java
    │  └─ resources
+   │     ├─ application-local.properties
+   │     ├─ application-prod.properties
    │     └─ application.properties
    └─ test
       └─ java
