@@ -33,5 +33,5 @@ public class UserResponseDto {
     private Boolean isRegisteredUser;
     private Boolean isRequesterOwner;
     private Boolean isAlreadyRequested;
-    private List<String> familyList;
+    private List<FamilyList> familyList;
 }

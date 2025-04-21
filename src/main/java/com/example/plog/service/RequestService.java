@@ -137,10 +137,17 @@ public class RequestService {
             .orElseThrow(() -> new NotFoundException("해당 요청을 찾을 수 없습니다."));
 
         // 유저와 수신자가 동일한지 확인
-        Long receiverId = request.getReceiver().getId();
-        if(!receiverId.equals(user.getId()) && !request.getReceiverEmail().equals(user.getEmail())){
+        Long receiverId = request.getReceiver() != null ? request.getReceiver().getId() : null;
+        String receiverEmail = request.getReceiverEmail();
+    
+        // 수신자 확인 로직: 둘 중 하나라도 일치하면 OK
+        boolean isIdMatch = receiverId != null && receiverId.equals(user.getId());
+        boolean isEmailMatch = receiverEmail != null && receiverEmail.equals(user.getEmail());
+    
+        if (!isIdMatch && !isEmailMatch) {
             throw new AuthenticationException("해당 요청에 권한이 없습니다.");
         }
+    
         return UserResponseDto.builder()
             .requesterNick(request.getRequester().getNickname())
             .petName(request.getPet().getPetName())

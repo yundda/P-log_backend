@@ -46,7 +46,7 @@ public class EntityFinder {
             .orElseThrow(() -> new NotFoundException("해당 ID의 FamilyEntity를 찾을 수 없습니다."));
     }
     public PetEntity getPetByUserIdAndPetName(Long userId, String petName) {
-        return familyJpaRepository.findByUserIdAndPetName(userId, petName)
+        return familyJpaRepository.findPetByUserIdAndPetName(userId, petName)
             .orElseThrow(() -> new NotFoundException("해당 이름의 펫을 찾을 수 없습니다."));
     }
 
@@ -64,7 +64,7 @@ public class EntityFinder {
             throw new InvalidValueException("유저가 해당 펫의 대표 관리자가 아닙니다.");
         }
 
-        return familyJpaRepository.findByUserIdAndPetName(receiver.getId(), petName)
+        return familyJpaRepository.findPetByUserIdAndPetName(receiver.getId(), petName)
             .orElseThrow(() -> new NotFoundException("해당 펫을 찾을 수 없습니다."));
     }
 }

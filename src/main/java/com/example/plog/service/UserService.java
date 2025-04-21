@@ -1,6 +1,7 @@
 package com.example.plog.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -17,8 +18,8 @@ import com.example.plog.security.TokenProvider;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
-import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.service.resolver.EntityFinder;
+import com.example.plog.web.dto.user.FamilyList;
 import com.example.plog.web.dto.user.UserResponseDto;
 import com.example.plog.web.dto.user.UserUpdateDto;
 
@@ -112,8 +113,7 @@ public class UserService {
         try {
         UserEntity user = entityFinder.getUserById(userPrincipal.getId());
         // 펫 정보 조회
-        PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
-            .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
+        PetEntity pet = entityFinder.getPetByUserIdAndPetName(user.getId(), petName);
         // 펫 삭제
             familyJpaRepository.deleteByUserAndPet(user,pet);
         } catch (DataAccessException e) {
@@ -124,11 +124,22 @@ public class UserService {
 
     public UserResponseDto getFamilyList(UserPrincipal userPrincipal, String petName) {
             UserEntity user = entityFinder.getUserById(userPrincipal.getId());
-            PetEntity pet = familyJpaRepository.findByUserIdAndPetName(user.getId(), petName)
-            .orElseThrow(() -> new NotFoundException("해당 펫은 사용자의 펫이 아닙니다."));
-            List<String> familyNickname = pet.getFamilyList().stream().map((family) -> family.getUser().getNickname()).filter((nickname)->!nickname.equals(user.getNickname())).toList();
+            PetEntity pet = entityFinder.getPetByUserIdAndPetName(user.getId(), petName);
+            // List<UserEntity> families = familyJpaRepository.findFamilyListByUserIdAndPetName(user.getId(),pet.getPetName());
+            List<FamilyList> families = pet.getFamilyList()
+            .stream()
+            .filter(family -> !family.getUser().getId().equals(user.getId()))
+            .map((family)-> {
+                UserEntity member = family.getUser();
+                return FamilyList.builder()
+                    .nickName(member.getNickname())
+                    .profileImage(member.getProfileImage())
+                    .build();
+            })
+            .collect(Collectors.toList());
             return UserResponseDto.builder()
-                .familyList(familyNickname)
+                .petName(pet.getPetName())
+                .familyList(families)
                 .build();
     }
 
