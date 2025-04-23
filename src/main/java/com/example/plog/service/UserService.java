@@ -19,7 +19,7 @@ import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.resolver.EntityFinder;
-import com.example.plog.web.dto.user.FamilyList;
+import com.example.plog.web.dto.user.FamilyInfoDto;
 import com.example.plog.web.dto.user.UserResponseDto;
 import com.example.plog.web.dto.user.UserUpdateDto;
 
@@ -68,7 +68,7 @@ public class UserService {
             if(updateInfo.getBeforePassword() == null){
                 throw new InvalidValueException("기존 비밀번호를 입력해주세요.");
             }else if(!passwordEncoder.matches(updateInfo.getBeforePassword(), user.getPassword())) {
-                    throw new InvalidValueException("기존 비밀번호를 일치하지 않습니다.");
+                    throw new InvalidValueException("기존 비밀번호와 일치하지 않습니다.");
             }
             // 사용자 정보 유효성 검사
             if (updateNick == null && updatePassword == null) {
@@ -126,22 +126,19 @@ public class UserService {
             UserEntity user = entityFinder.getUserById(userPrincipal.getId());
             PetEntity pet = entityFinder.getPetByUserIdAndPetName(user.getId(), petName);
             // List<UserEntity> families = familyJpaRepository.findFamilyListByUserIdAndPetName(user.getId(),pet.getPetName());
-            List<FamilyList> families = pet.getFamilyList()
-            .stream()
-            .filter(family -> !family.getUser().getId().equals(user.getId()))
-            .map((family)-> {
-                UserEntity member = family.getUser();
-                return FamilyList.builder()
-                    .nickName(member.getNickname())
-                    .profileImage(member.getProfileImage())
-                    .build();
-            })
-            .collect(Collectors.toList());
+            List<FamilyInfoDto> families = pet.getFamilyList().stream()
+                    .filter(family -> !family.getUser().getId().equals(user.getId()))
+                    .map((family)-> {
+                        UserEntity member = family.getUser();
+                        return FamilyInfoDto.builder()
+                            .nickName(member.getNickname())
+                            .profileImage(member.getProfileImage())
+                            .build();
+                    })
+                    .collect(Collectors.toList());
             return UserResponseDto.builder()
                 .petName(pet.getPetName())
                 .familyList(families)
                 .build();
     }
-
-    
 }

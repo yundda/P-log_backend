@@ -1,8 +1,6 @@
 package com.example.plog.repository.detaillog;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 import com.example.plog.repository.BaseEntity;
 import com.example.plog.repository.Enum.Mealtype;
 import com.example.plog.repository.petlog.PetlogEntity;
@@ -43,7 +41,7 @@ public class DetaillogEntity extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "log_id", nullable = false)
-    private PetlogEntity log_id;
+    private PetlogEntity log;
 
     @Column(name = "log_time", nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime log_time;

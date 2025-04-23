@@ -1,6 +1,5 @@
 package com.example.plog.web.dto.healthlog;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -32,7 +32,6 @@ public class EntityFinder {
         return userJpaRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
     }
-
     public UserEntity getUserByNickname(String nickname) {
         return userJpaRepository.findByNickname(nickname)
             .orElseThrow(() -> new NotFoundException("해당 닉네임의 사용자를 찾을 수 없습니다."));
@@ -43,11 +42,11 @@ public class EntityFinder {
     }
     public FamilyEntity getFamilyById(Long familyId) {
         return familyJpaRepository.findById(familyId)
-            .orElseThrow(() -> new NotFoundException("해당 ID의 FamilyEntity를 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundException("해당 ID의 가족을 찾을 수 없습니다."));
     }
     public PetEntity getPetByUserIdAndPetName(Long userId, String petName) {
         return familyJpaRepository.findPetByUserIdAndPetName(userId, petName)
-            .orElseThrow(() -> new NotFoundException("해당 이름의 펫을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundException("해당 펫을 찾을 수 없습니다."));
     }
 
     public PetEntity findPetOrThrowIfNotFoundOrIfNotOwner(String petName, UserEntity receiver) {

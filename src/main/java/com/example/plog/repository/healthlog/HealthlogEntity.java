@@ -38,7 +38,7 @@ public class HealthlogEntity extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "log_id", nullable = false)
-    private PetlogEntity log_id;
+    private PetlogEntity log;
 
     @Column(name = "vaccination")
     private String vaccination;

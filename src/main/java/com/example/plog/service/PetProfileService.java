@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.plog.repository.Enum.Role;
@@ -16,6 +16,7 @@ import com.example.plog.repository.healthlog.HealthlogJpaRepository;
 import com.example.plog.repository.pet.PetEntity;
 import com.example.plog.repository.pet.PetJpaRepository;
 import com.example.plog.repository.petlog.PetlogJpaRepository;
+import com.example.plog.repository.request.RequestJpaRepository;
 import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
@@ -28,9 +29,11 @@ import com.example.plog.web.dto.pet.PetUpdateDto;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PetProfileService{
 
     @Autowired
@@ -56,8 +59,10 @@ public class PetProfileService{
 
     @Autowired
     PetlogJpaRepository petlogJpaRepository;
-    
 
+    @Autowired
+    RequestJpaRepository requestJpaRepository;
+    
     public PetResponseDto createPet(UserPrincipal userPrincipal, PetCreateDto petCreateDto, MultipartFile image) {
         String imageUrl = s3Service.upload(image);
 
@@ -122,7 +127,9 @@ public class PetProfileService{
     }
 
     // 반려동물 정보를 업데이트하는 메서드
-    public PetResponseDto updatePet(UserPrincipal userPrincipal, @RequestBody PetUpdateDto petUpdateDto) {
+    public PetResponseDto updatePet(UserPrincipal userPrincipal,
+                @RequestPart("info") PetUpdateDto petUpdateDto,
+                @RequestPart(value = "image", required = false) MultipartFile image) {
   
         // 반려동물 이름으로 데이터베이스에서 반려동물 엔티티 조회
         PetEntity entity = entityFinder.getPetByPetName(petUpdateDto.getPetName());
@@ -145,9 +152,11 @@ public class PetProfileService{
         if (petUpdateDto.getPetWeight() != null) {
             entity.setPetWeight(petUpdateDto.getPetWeight());
         }
-        if (petUpdateDto.getPetPhoto() != null) {
-            entity.setPetPhoto(petUpdateDto.getPetPhoto());
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = s3Service.upload(image); // ✅ 여기에 진짜 업로드 로직 들어감
+            entity.setPetPhoto(imageUrl);
         }
+        
 
         petJpaRepository.save(entity);
 
@@ -169,6 +178,14 @@ public class PetProfileService{
         UserEntity userEntity = entityFinder.getUserById(userPrincipal.getId());
         // 주어진 petId가 데이터베이스에 존재하지 않으면 예외 발생
         PetEntity petEntity = entityFinder.findPetOrThrowIfNotFoundOrIfNotOwner(name, userEntity);
+
+        detaillogJpaRepository.deleteByLog_Pet(petEntity);
+        healthlogJpaRepository.deleteByLog_Pet(petEntity);
+        petlogJpaRepository.deleteByPet(petEntity);
+        requestJpaRepository.deleteByPet(petEntity);
+        // S3에서 이미지 삭제
+
+
 
         // 데이터베이스에서 관련 FamilyEntity 삭제
         familyJpaRepository.deleteAllByPet(petEntity);

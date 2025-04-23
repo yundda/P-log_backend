@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.example.plog.service.exceptions.AuthenticationException;
 import com.example.plog.service.exceptions.AuthorizationException;
 import com.example.plog.service.exceptions.DatabaseException;
+import com.example.plog.service.exceptions.FileUploadException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.exceptions.NotFoundException;
 import com.example.plog.web.dto.ApiResponse;
@@ -47,6 +48,11 @@ public class ExceptionalControllerAdvice {
     @ExceptionHandler(DatabaseException.class)
     public ResponseEntity<ApiResponse<Void>> handleDatabaseException(DatabaseException dbe) {
         return handleException(dbe, HttpStatus.INTERNAL_SERVER_ERROR,"DBE");
+    }
+    //S3 업로드 오류(500)
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFileUploadException(FileUploadException fue) {
+        return handleException(fue, HttpStatus.INTERNAL_SERVER_ERROR, "S3");
     }
     // 기타 모든 에러 처리(500)
     @ExceptionHandler(Exception.class)

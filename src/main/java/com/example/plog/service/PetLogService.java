@@ -79,16 +79,16 @@ public class PetLogService {
         // PetLog의 타입이 "HOSPITAL"이 아닌 경우 상세 로그 생성
         if (!savedPetlog.getType().equals(Type.HOSPITAL)) {
             detailLogEntity = convertToDetaillogEntity(petLogDetailLogDto.getDetailLog());
-            detailLogEntity.setLog_id(savedPetlog);
+            detailLogEntity.setLog(savedPetlog);
             detaillogJpaRepository.save(detailLogEntity);
         }
 
         // 생성된 PetLog와 DetailLog 정보를 PetLogDto로 반환
         return PetLogDto.builder()
-                .petId(petlogEntity.getPet_id().getId())
-                .userId(petlogEntity.getUser_id().getId())
+                .petId(petlogEntity.getPet().getId())
+                .userId(petlogEntity.getUser().getId())
                 .type(petlogEntity.getType())
-                .logId(detailLogEntity != null ? detailLogEntity.getLog_id().getId() : null)
+                .logId(detailLogEntity != null ? detailLogEntity.getLog().getId() : null)
                 .logTime(detailLogEntity != null ? detailLogEntity.getLog_time() : null)
                 .mealType(detailLogEntity != null ? detailLogEntity.getMeal_type() : null)
                 .place(detailLogEntity != null ? detailLogEntity.getPlace() : null)
@@ -101,8 +101,8 @@ public class PetLogService {
     // PetLogDto를 PetlogEntity로 변환하는 메서드
     private PetlogEntity convertToPetlogEntity(PetLogDto petLogDto) {
         return PetlogEntity.builder()
-                .pet_id(PetEntity.builder().id(petLogDto.getPetId()).build())      
-                .user_id(UserEntity.builder().id(petLogDto.getUserId()).build())
+                .pet(PetEntity.builder().id(petLogDto.getPetId()).build())      
+                .user(UserEntity.builder().id(petLogDto.getUserId()).build())
                 .type(petLogDto.getType())
                 .build();
     }
@@ -138,16 +138,16 @@ public class PetLogService {
         // PetLog의 타입이 "HOSPITAL"인 경우 건강 로그 생성
         if (savedPetlog.getType().equals(Type.HOSPITAL)) {
             healthlogEntity = convertToHealthLogEntity(petLogHealthLogDto.getHealthLog());
-            healthlogEntity.setLog_id(savedPetlog);
+            healthlogEntity.setLog(savedPetlog);
             healthlogJpaRepository.save(healthlogEntity);
         }
 
         // 생성된 PetLog와 HealthLog 정보를 PetLogDto로 반환
         return PetLogDto.builder()
-        .petId(petlogEntity.getPet_id().getId())
-        .userId(petlogEntity.getUser_id().getId())
+        .petId(petlogEntity.getPet().getId())
+        .userId(petlogEntity.getUser().getId())
         .type(petlogEntity.getType())
-        .logId(healthlogEntity != null ? healthlogEntity.getLog_id().getId() : null)
+        .logId(healthlogEntity != null ? healthlogEntity.getLog().getId() : null)
         .logDate(healthlogEntity != null ? healthlogEntity.getHospital_log() : null)
         .build();
     }
@@ -155,8 +155,8 @@ public class PetLogService {
     // PetLogDtoForHealth를 PetlogEntity로 변환하는 메서드
     private PetlogEntity convertToPetlogEntity(PetLogDtoForHealth petLogDtoForHealth) {
         return PetlogEntity.builder()
-                .pet_id(PetEntity.builder().id(petLogDtoForHealth.getPetId()).build())      
-                .user_id(UserEntity.builder().id(petLogDtoForHealth.getUserId()).build())
+                .pet(PetEntity.builder().id(petLogDtoForHealth.getPetId()).build())      
+                .user(UserEntity.builder().id(petLogDtoForHealth.getUserId()).build())
                 .type(petLogDtoForHealth.getType())
                 .build();
     }
@@ -191,7 +191,7 @@ public class PetLogService {
                 .price(detailLog.getPrice())
                 .take_time(detailLog.getTake_time())
                 .memo(detailLog.getMemo())
-                .type(detailLog.getLog_id().getType())
+                .type(detailLog.getLog().getType())
                 .build()
             ).toList();
     }
@@ -224,13 +224,13 @@ public class PetLogService {
         DetaillogEntity detail = detaillogJpaRepository.findById(dto.getLog_id())
         .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + dto.getLog_id()));
 
-        Long ownerId = detail.getLog_id().getUser_id().getId();
+        Long ownerId = detail.getLog().getUser().getId();
         if (!ownerId.equals(userPrincipal.getId())) {
         throw new AuthorizationException("접근 권한이 없습니다.");
         }
 
-        if (dto.getNewType() != null && dto.getNewType() != detail.getLog_id().getType()) {
-            PetlogEntity petlog = detail.getLog_id();
+        if (dto.getNewType() != null && dto.getNewType() != detail.getLog().getType()) {
+            PetlogEntity petlog = detail.getLog();
             petlog.setType(dto.getNewType());
             try {
                 petlogJpaRepository.save(petlog);
@@ -262,8 +262,8 @@ public class PetLogService {
             HealthlogEntity healthlog = healthlogJpaRepository.findById(dto.getLog_id())
             .orElseThrow(() -> new NotFoundException("요청한 데이터를 찾을 수 없습니다 : id=" + dto.getLog_id()));
 
-            Long ownerId = healthlog.getLog_id()
-            .getUser_id().getId(); 
+            Long ownerId = healthlog.getLog()
+            .getUser().getId(); 
             if (!ownerId.equals(userPrincipal.getId())) {
             throw new AuthorizationException("접근 권한이 없습니다.");
 }
@@ -290,6 +290,7 @@ public class PetLogService {
         // 2) 삭제
         try {
             detaillogJpaRepository.delete(detail);
+            petlogJpaRepository.deleteById(detail.getLog().getId());
         } catch (Exception e) {
             throw new DatabaseException("DB를 삭제하는 중 오류가 발생했습니다 : " + e.getMessage());
         }
@@ -305,6 +306,7 @@ public class PetLogService {
         // 2) 삭제
         try {
             healthlogJpaRepository.delete(health);
+            petlogJpaRepository.deleteById(health.getLog().getId());
         } catch (Exception e) {
             throw new DatabaseException("DB를 삭제하는 중 오류가 발생했습니다 : " + e.getMessage());
         }

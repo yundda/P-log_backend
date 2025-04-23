@@ -59,7 +59,7 @@ public class PetEntity extends BaseEntity {
     @Column(name = "pet_weight", nullable = false)
     private Double petWeight;
 
-    @Column(name = "pet_photo")
+    @Column(name = "pet_photo",length = 1024)
     private String petPhoto;
 
     @OneToMany(mappedBy = "pet")
