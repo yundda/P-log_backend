@@ -1,7 +1,5 @@
 package com.example.plog.service;
 
-import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,6 @@ import com.example.plog.repository.user.UserEntity;
 import com.example.plog.repository.user.UserJpaRepository;
 import com.example.plog.security.UserPrincipal;
 import com.example.plog.service.exceptions.AuthenticationException;
-import com.example.plog.service.exceptions.AuthorizationException;
 import com.example.plog.service.exceptions.DatabaseException;
 import com.example.plog.service.exceptions.InvalidValueException;
 import com.example.plog.service.exceptions.NotFoundException;
@@ -136,17 +133,7 @@ public class RequestService {
         RequestEntity request = requestJpaRepository.findById(requestId)
             .orElseThrow(() -> new NotFoundException("해당 요청을 찾을 수 없습니다."));
 
-        // 유저와 수신자가 동일한지 확인
-        Long receiverId = request.getReceiver() != null ? request.getReceiver().getId() : null;
-        String receiverEmail = request.getReceiverEmail();
-    
-        // 수신자 확인 로직: 둘 중 하나라도 일치하면 OK
-        boolean isIdMatch = receiverId != null && receiverId.equals(user.getId());
-        boolean isEmailMatch = receiverEmail != null && receiverEmail.equals(user.getEmail());
-    
-        if (!isIdMatch && !isEmailMatch) {
-            throw new AuthenticationException("해당 요청에 권한이 없습니다.");
-        }
+        validateReceiverPermission(request, user);
     
         return UserResponseDto.builder()
             .requesterNick(request.getRequester().getNickname())
@@ -201,8 +188,12 @@ public class RequestService {
     private void validateReceiverPermission(RequestEntity request, UserEntity user) {
         Long receiverId = request.getReceiver() != null ? request.getReceiver().getId() : null;
         String receiverEmail = request.getReceiverEmail();
-        if (!Objects.equals(receiverId, user.getId()) && !Objects.equals(receiverEmail, user.getEmail())) {
-            throw new AuthorizationException("해당 요청에 권한이 없습니다.");
+
+        boolean isIdMatch = receiverId != null && receiverId.equals(user.getId());
+        boolean isEmailMatch = receiverEmail != null && receiverEmail.equals(user.getEmail());
+    
+        if (!isIdMatch && !isEmailMatch) {
+            throw new AuthenticationException("해당 요청에 권한이 없습니다.");
         }
     }
 

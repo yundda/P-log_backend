@@ -19,5 +19,7 @@ public interface RequestJpaRepository extends JpaRepository<RequestEntity,Long> 
 
     Optional<RequestEntity> findByRequesterAndReceiverEmailAndPet(UserEntity user, String familyEmail, PetEntity pet);
 
+    void deleteByPet(PetEntity petEntity);
+
 
 }

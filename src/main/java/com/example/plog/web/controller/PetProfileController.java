@@ -64,13 +64,16 @@ public class PetProfileController {
         return ApiResponse.success(response);
     }
 
-      @PatchMapping("/update")
+      @PatchMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
       public ResponseEntity<ApiResponse<PetResponseDto>> updatePet(
-              @CurrentUser UserPrincipal userPrincipal, 
-              @RequestBody PetUpdateDto petUpdateDto) {
-        PetResponseDto response = petProfileService.updatePet(userPrincipal, petUpdateDto);
-        return ApiResponse.success(response);
-      }
+      @CurrentUser UserPrincipal userPrincipal,
+      @RequestPart("info") PetUpdateDto petUpdateDto,
+      @RequestPart(value = "image") MultipartFile image) {
+
+      PetResponseDto response = petProfileService.updatePet(userPrincipal, petUpdateDto, image);
+      return ApiResponse.success(response);
+    }
+
  
       @DeleteMapping("/delete/{petName}")
       public ResponseEntity<ApiResponse<Void>> deletePet(

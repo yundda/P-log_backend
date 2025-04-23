@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FamilyList {
+public class FamilyInfoDto {
     private String nickName;
     private String profileImage;
 }

@@ -1,6 +1,5 @@
 package com.example.plog.repository.healthlog;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -11,15 +10,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.plog.repository.pet.PetEntity;
+
 import jakarta.transaction.Transactional;
 
 @Repository
 public interface HealthlogJpaRepository extends JpaRepository<HealthlogEntity,Long>{
-     @Query("SELECT h FROM HealthlogEntity h WHERE h.log_id.pet_id.id = :petId")
+     @Query("SELECT h FROM HealthlogEntity h WHERE h.log.pet.id = :petId")
     List<HealthlogEntity> findAllByPetId(@Param("petId") Long petId);
 
     @Query("SELECT h FROM HealthlogEntity h " +
-    " WHERE h.log_id.pet_id.id = :petId " +
+    " WHERE h.log.pet.id = :petId " +
     "   AND h.hospital_log   = :oldHospitalLog")
     Optional<HealthlogEntity> findByPetIdAndHospitalLog(
     @Param("petId") Long petId,
@@ -29,12 +30,14 @@ public interface HealthlogJpaRepository extends JpaRepository<HealthlogEntity,Lo
     @Transactional
     @Query(
       "DELETE FROM HealthlogEntity h " +
-      " WHERE h.log_id.pet_id.id   = :petId " +
+      " WHERE h.log.pet.id   = :petId " +
       "   AND h.hospital_log        = :hospitalLog"
     )
     void deleteByPetIdAndHospitalLog(
         @Param("petId")       Long petId,
         @Param("hospitalLog") LocalDateTime hospitalLog
     );
-    
+
+    void deleteByLog_Pet(PetEntity petEntity);
+
 }

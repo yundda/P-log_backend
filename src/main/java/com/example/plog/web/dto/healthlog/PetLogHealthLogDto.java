@@ -1,6 +1,5 @@
 package com.example.plog.web.dto.healthlog;
 
-import com.example.plog.web.dto.petlog.PetLogDto;
 import com.example.plog.web.dto.petlog.PetLogDtoForHealth;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

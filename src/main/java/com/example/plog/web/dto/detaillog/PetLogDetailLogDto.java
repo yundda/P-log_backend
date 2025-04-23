@@ -1,8 +1,6 @@
 package com.example.plog.web.dto.detaillog;
 
-import java.time.LocalTime;
 
-import com.example.plog.repository.Enum.Type;
 import com.example.plog.web.dto.petlog.PetLogDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

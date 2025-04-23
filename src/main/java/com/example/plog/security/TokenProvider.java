@@ -34,7 +34,7 @@ public class TokenProvider {
         log.info("createToken: {}", userEntity.getId());
         return Jwts.builder()
                 .signWith(getSigningKey(),SignatureAlgorithm.HS512)
-                .setSubject(String.valueOf(userEntity.getId()))
+                .setSubject(String.valueOf(userEntity.getId())) // userId를 subject로 설정
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
@@ -49,6 +49,6 @@ public class TokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
                 
-        return claims.getSubject();
+        return claims.getSubject(); // userId를 가져옴
     }
 }

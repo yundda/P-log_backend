@@ -40,11 +40,11 @@ public class PetlogEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "pet_id", nullable = false)
-    private PetEntity pet_id;
+    private PetEntity pet;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user_id;
+    private UserEntity user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)

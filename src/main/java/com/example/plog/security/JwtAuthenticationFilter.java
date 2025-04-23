@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.plog.repository.user.UserEntity;
-import com.example.plog.repository.user.UserJpaRepository;
-import com.example.plog.service.exceptions.InvalidValueException;
+import com.example.plog.service.exceptions.AuthorizationException;
+import com.example.plog.service.resolver.EntityFinder;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,8 +28,9 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Autowired
     private TokenProvider tokenProvider;
+
     @Autowired
-    private UserJpaRepository UserJpaRepository;
+    private EntityFinder entityFinder;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException {
@@ -40,15 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             if(token != null && !token.equalsIgnoreCase("null")){
                 Long userId =Long.valueOf(tokenProvider.validateAndGetUserId(token));
                 log.info("userId: {}", userId);
-                UserEntity user = UserJpaRepository.findById(userId).orElseThrow(()-> new InvalidValueException("존재하지 않는 사용자입니다."));
-                UserPrincipal principal = new UserPrincipal(userId, user.getNickname());
-                log.info("principal: {}", principal);
+                UserEntity user = entityFinder.getUserById(userId);
+                UserPrincipal userPrincipal = new UserPrincipal(userId, user.getNickname());
+                log.info("principal: {}", userPrincipal);
                 // 추출한 userId 를 이용해서 인증객체 생성
                 /*
                 * AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(주체, 자격증명, 권한정보);
                 * 권한정보: 해당 userId를 가진 user 의 권한 정보 (admin, user, .. ), 현재는 권한X
                 * */
-                AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null, AuthorityUtils.NO_AUTHORITIES);
+                AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null, AuthorityUtils.NO_AUTHORITIES);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 
                 // SecurityContext: 현재 사용자의 보안 컨텍스트(SecurityContext)를 저장하고 관리하는 전역 저장소
@@ -63,8 +64,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 log.info("Current authentication: {}", auth);
             }
 
-        }catch(Exception ex){
-            throw new RuntimeException("JwtAuthentication Filter에서 Error 발생", ex);
+        }catch(Exception e){
+            log.error("JwtAuthentication Filter에서 오류가 발생했습니다. {}", e.getMessage());
+            throw new AuthorizationException("JwtAuthentication Filter에서 Error 발생");
         }
         filterChain.doFilter(request, response);
     }

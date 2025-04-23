@@ -10,10 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.example.plog.service.exceptions.FileUploadException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class S3Service {
-    @Value("${cloud.aws.s3.bucket}") private String bucketName;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
     private final AmazonS3 s3;
 
     public S3Service(AmazonS3 s3) {
@@ -27,8 +32,9 @@ public class S3Service {
     meta.setContentType(file.getContentType());
     try (InputStream is = file.getInputStream()) {
       s3.putObject(bucketName, filename, is, meta);
-    } catch (IOException e) {
-      throw new RuntimeException("S3 업로드 실패", e);
+    } catch (Exception e) {
+      log.error("S3 업로드 실패: {}", e.getMessage(), e);
+      throw new FileUploadException("S3 업로드 실패");
     }
     return s3.getUrl(bucketName, filename).toString();
     }

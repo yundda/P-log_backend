@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import com.example.plog.repository.Enum.Gender;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,6 @@ import lombok.ToString;
 @ToString
 @Builder
 public class PetProfileDto {
-    // private Long id;
     private String petName;
     private String petSpecies;
     private String petBreed;
