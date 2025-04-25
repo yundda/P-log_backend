@@ -140,6 +140,7 @@ public class RequestService {
             .petName(request.getPet().getPetName())
             .requestId(requestId)
             .isRequesterOwner(request.getIsRequesterOwner())
+            .profileImage(request.getRequester().getProfileImage()) 
             .build();
     }
     @Transactional
